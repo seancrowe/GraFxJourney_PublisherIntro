@@ -1,0 +1,24 @@
+{
+  "name": "grafxjourney_publisherintro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "3": "node ./02_HTTP_API_And_Swagger/script.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seancrowe/GraFxJourney_PublisherIntro.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seancrowe/GraFxJourney_PublisherIntro/issues"
+  },
+  "homepage": "https://github.com/seancrowe/GraFxJourney_PublisherIntro#readme",
+  "dependencies": {
+    "@chili-publish/publisher-interface": "^0.3.5",
+    "cross-fetch": "^3.1.6"
+  }
+}
