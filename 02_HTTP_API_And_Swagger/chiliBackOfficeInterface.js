@@ -2,30 +2,140 @@
 
 
 //GenerateAPIKey
-export async function generateAPIKey({baseURL, userName, password, environment}) {
+export async function generateAPIKey({ baseURL, userName, password, environment }) {
     // Endpoint for generate API key found in swagger: https://ft-nostress.chili-publish.online/swagger/ui/index#!/System/RestApi_GenerateApiKey
     const response = await fetch(`${baseURL}/rest-api/v1.2/system/apikey?environmentNameOrURL=${environment}`, {
-        method:"POST",
+        method: "POST",
         headers: {
             "content-type": "application/json",
         },
         body: JSON.stringify({
-            "userName": userName,
-            "password": password
+            // We have to check if the userName is an empty string, because if it is, the endpoint will return status 400
+            "userName": (userName == "") ? " " : userName,
+            // We have to check if the password is an empty string, because if it is, the endpoint will return status 400
+            "password": (password == "") ? " " :  password
         })
     })
+
+    // You get any error status if your write the body correctly, and you provide the query paramter
+    // We stop the 400 that would be caused by an empty password
+    if (!response.ok) {
+        
+    }
+
+    const responseXmlString = await response.text();
+
+    // API key will return XML with "succeeded={true/false}", if that is false then have to check errorMessage
+    try {
+        const responseDoc = (new DOMParser()).parseFromString(x, "application/xml");
+        if (responseDoc.firstChild.getAttribute("succeeded") == "false") {
+            
+        }
+    }
+    catch (e) {
+
+    }
+
+    if ()
 
     // Handle the odd error cases
 }
 
 //ResourceGetTreeLevel
+export async function resourceGetTreeLevel({ baseURL, resourceName, parentFolder, numLevels, includeSubDirectories, includeFiles }) {
+    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/${resourceName}/treelevel?parentFolder=${parentFolder}&numLevels=${numLevels}&includeSubDirectories=${includeSubDirectories}&includeFiles=${includeFiles}`, {
+        method: "GET",
+        headers: {
+            "api-key": apikey
+        }
+    });
 
-//AssetDownload - preview
+    //error handling off response code here
+    //maaayyybbbe not an error, but if the parent folder doesn't exist, you get a 200 with an empty tree
+    //500 for incorrect resourceType
+    //won't error unless you say the resourceName is "hello" or something like that
+}
+
+//DownloadAssets - preview
+export async function downloadAssets({ baseURL, resourceType, id }) {
+    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/${resourceType}/download?id=${id}&async=false`, {
+        method: "GET",
+        headers: {
+            "api-key": apikey
+        }
+    });
+
+    //error handling off response code here
+    if(!response.ok){
+        //404 not found if ID doesn't exist
+        //500 - resource not found if resourceType isn't correct
+
+    }
+
+}
 
 
 
 //DocumentCreatePDF
+export async function documentCreatePDF({ baseURL, itemID, settingsXML }) {
+    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/documents/${itemID}/representations/pdf`, {
+        method: "POST",
+        headers: {
+            "api-key": apikey,
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            "settingsXML": settingsXML
+        })
+    });
+
+    //error handling here
+    //400, body is wrong
+    //500 if settingsXML string isn't valid XML
+    //500, object reference not instance of object if you put in a non-string for settingsXML
+}
 
 //DocumentCreateTempPDF
+export async function documentCreateTempPDF({baseURL, settingsXML, docXML}) {
+    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/documents/tempxml/pdf`, {
+        method: "POST",
+        headers: {
+            "api-key": apikey,
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            "settingsXML": settingsXML,
+            "docXML": docXML
+        })
+    });
 
-//
+    //error handling here
+    //400, body is wrong
+    //500, XML given isn't valid
+
+
+}
+
+//TaskGetStatus
+export async function taskGetStatus({baseURL, taskID}) {
+    const response = await fetch(`${baseURL}/rest-api/v1.2/system/tasks/${taskID}/status`, {
+        method: "GET",
+        headers: {
+            "api-key": apikey
+        }
+    });
+
+    const body = await response.text();
+    const succeeded = (new DOMParser()).parseFromString(body, "text/xml").getElementsByTagName("task")[0].getAttribute("succeeded");
+
+    if(succeeded == "true"){ //is this true or True?
+        //check the result URL, if it's empty have to account for that
+        //if((new DOMParser()).parseFromString(body, "text/xml").getElementsByTagName("task")[0].getAttribute("result") //what's the result attribute actually called?
+    }
+    else{
+        //it broked
+    }
+
+    //error handling here
+    //everything's a 200, failures only show up in the XML (unless they don't, i.e. success w/ no URL)
+}
