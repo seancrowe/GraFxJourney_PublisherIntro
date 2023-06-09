@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "3": "node ./02_HTTP_API_And_Swagger/script.js"
   },

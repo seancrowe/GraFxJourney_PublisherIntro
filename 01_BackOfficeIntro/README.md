@@ -1,0 +1,2 @@
+- setup users for API and end user
+- discuss permissions
