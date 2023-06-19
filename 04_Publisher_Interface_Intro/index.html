@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Publisher Interface Intro</title>
+</head>
+
+<body>
+    <!-- Basic login "screen" -->
+    <div id="loginScreen" style="display:flex">
+        Username: <input id="user" type="text" />
+        Password: <input id="pass" type="text" />
+        <button id="login">Log in to CHILI</button>
+    </div>
+    <div id="editorScreen" style="display:none">
+        <!-- This iframe will hold the CHILI Publisher editor -->
+        <iframe></iframe>
+    </div>
+    <script type="module" src="./script.js"> </script>
+</body>
+
+</html>

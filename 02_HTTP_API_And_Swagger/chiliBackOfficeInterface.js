@@ -1,5 +1,8 @@
-
-
+// TODO:
+//  -Finish these out
+//  -Leave brief explanations of enpoints that weren't covered in the main lesson
+//  -Re: error handling -- Maybe just have it on generateAPIKey for now (this isn't a general web dev course, they should know
+//      how to generally do that sort of thing coming in; not our responsibility to teach)
 
 //GenerateAPIKey
 export async function generateAPIKey({ baseURL, userName, password, environment }) {
@@ -74,7 +77,7 @@ export async function downloadAssets({ baseURL, resourceType, id }) {
 
 }
 
-
+//add in a section for Get/SetVariableValues
 
 //DocumentCreatePDF
 export async function documentCreatePDF({ baseURL, itemID, settingsXML }) {
