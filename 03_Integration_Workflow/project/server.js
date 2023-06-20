@@ -35,37 +35,27 @@ const server = http.createServer((req, res) => {
           res.writeHead(200, { "Content-Type": "text/html" });
           res.end(content);
         }
+
+        return;
       });
     }
   }
   else {
-    if (req.url == "/" || req.url == "/store" || req.url == "/authentication") {
+    const url = (req.url == "/" || req.url == "/authentication") ? "/store" : req.url;
 
-      fs.readFile(`${publicPath}/store.html`, "utf8", (err, content) => {
-        if (err) {
-          res.writeHead(403, { "Content-Type": "text/plain" });
-          res.end("No store found.");
-          console.error(err);
-        } else {
-          res.writeHead(200, { "Content-Type": "text/html" });
-          res.end(content);
-        }
-      });
-      
+    const fileName = (url.includes(".js")) ? url : `${url}.html`;
+
+    try {
+      const content = fs.readFileSync(`${publicPath}${fileName}`);
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.end(content);
+      return;
     }
-
-    if (req.url === "/editor") {
-      fs.readFile(`${publicPath}/editor.html`, "utf8", (err, content) => {
-        if (err) {
-          res.writeHead(500, { "Content-Type": "text/plain" });
-          res.end("Internal Server Error");
-          console.error(err);
-        } else {
-          res.writeHead(200, { "Content-Type": "text/html" });
-          res.end(content);
-        }
-      });
-      
+    catch(err) {
+        res.writeHead(403, { "Content-Type": "text/plain" });
+        res.end(`No ${req.url} found.`);
+        console.error(err);
+        return;
     }
   }
  
