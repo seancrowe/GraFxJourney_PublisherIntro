@@ -1,4 +1,4 @@
-export function authentication() {
+export function getAPIKeyForUser() {
  return "hi"
 }
 

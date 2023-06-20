@@ -18,19 +18,27 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" />
           </div>
+          <div id="error-message" style="color:red"></div>
           <div>
             <button onclick="login()">Login</button>
           </div>
       </div>
       <script>
-        function login() {
+        async function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            fetch("/authentication", {
+            const resp = await fetch("/authentication", {
                 method:"POST",
                 body: JSON.stringify({username, password})
-            })
+            });
+
+            if (resp.ok) {
+              window.location.reload();
+            }
+            else {
+              document.getElementById("error-message").innerText = `Error on login endpoint:${resp.status}`;
+            }
         }
       </script>
 </body>
