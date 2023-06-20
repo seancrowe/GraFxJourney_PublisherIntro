@@ -1,5 +1,19 @@
 
-# Swagger UI
+# Working With The HTTP API
+
+## Chapter Setup
+This chapter is pretty easy. We will first be working with swagger and then we move to writing some JavaScript.
+
+There is only two setup steps:
+- Create a `chiliBackOfficeInterface.js` file in your project root folder.
+- Install the `cross-fetch` library. While nodejs version 18+ has a fetch library built into the system, the default timeout is quite low that some CHILI endpoints, such as generating previews, will cause a timeout. By using `cross-fetch` we make sure that the code in this project will work on all versions of nodejs above 12 and avoid awkward timeout issues.
+    - You can install the library by running the following command at the root of your directory.
+
+```
+npm install cross-fetch
+```
+
+## Swagger UI
 You  can find the swagger documentation on any environment URL:
 ```
 https://{environment}.chili-publish.online/swagger/ui/index/
@@ -34,6 +48,25 @@ You can grab this API key and paste it into the input at the vert top of the swa
 Once `Explore` is pushed, all requests made in the swagger UI will have this API key attached to request.
 
 Let's not steal an API key from the BackOffice but instead generate our own...
+
+# Creating API Functions
+We took a look at Swagger, but eventually you are going to want to build out your own API library that will allow you to interface with the Publisher environment.
+
+We are going to create a few functions to get the hang of how to use the API, and then we will be asking you to create your own functions.
+
+In the git chapter folder, `02_HTTP_API_And_Swagger` you can find a completed `chiliBackOfficeInterface.js` with comments that explain each an every step.
+
+The functions we will build together are:
+- Generate API key to use in other API calls - `generateAPIKey`
+- Getting the resource tree level to see documents in a folder
+- Updating document variables
+- Creating PDF output using id and then using XML
+- Getting the finished task of a PDF output
+- Generating a preview of a document
+
+The functions you will be building on your own are:
+- Verifying an API key is still valid
+...
 
 
 ## Building a Generate API Key Function
