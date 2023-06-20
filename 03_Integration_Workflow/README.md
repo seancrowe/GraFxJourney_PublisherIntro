@@ -5,9 +5,9 @@ In this section we going to using our `chiliBackOfficeInterface.js` and knowledg
 
 This integration will include:
 - A login screen, where we will attach a CHILI API key to the session.
-- A page to display our templates that a user can select.
+- A page to display our documents that a user can select.
 - A page to load a selected template for a user to edit, save, and generate output.
-- A page to display all the templates a user has created, and to generate output.
+- A page to display all the documents a user has created, and to generate output.
 
 
 ## Chapter Setup
@@ -32,7 +32,9 @@ In your terminal you will see the message.
 Server running on port 3000
 ```
 
-If you go to `http://localhost:3000` in a browser you will get a message "No login page found".
+If you go to `http://localhost:3000` in a browser you will get a message "No login page found". 
+
+Don't forget to `ctrl` + `c` to terminate the node process before moving onto the next section.
 
 <br/>
 
@@ -55,7 +57,7 @@ This is a very simple HTML file that has a button which will call our backend. S
 ### Creating the getAPIKeyForUser function
 So, we need to add a function in our `backend.js` named `getAPIKeyForUser`. The signature for this function will be:
 ```ts
-(username) => {username:string, apiKey:string}
+(username:string) => {username:string, apiKey:string}
 ```
 
 So we can write the first version of our function to match that signature.
@@ -164,7 +166,7 @@ Then go to `http://localhost:3000`and you will see a login page.
 
 Type in a username and password, and press _Login_, the page will reload and you will see an error message: "No store found."
 
-Great! This is exactly what we wanted to happen.
+Great! This is exactly what we wanted to happen. Don't forget to `ctrl` + `c` to terminate the node process before moving onto the next section.
 
 <br/>
 
@@ -180,7 +182,139 @@ Great! This is exactly what we wanted to happen.
     - 📄server.js
     - 📄package-lock.json
     - 📄package.json
-- If you do not get the error message "No store found." but instead get an site that warns about store access failed, then you probably copied over too many files from `03_Integration_Workflow/project/public` to your project's `public` folder. Please see the above root folder diagram. Your `public` folder should only have one file in it: `login.html`.
+- If you do not get the error message "No store found." but instead get an site with a blue navigation at the top, then you probably copied over too many files from `03_Integration_Workflow/project/public` to your project's `public` folder. Please see the above root folder diagram. Your `public` folder should only have one file in it: `login.html`.
     
 
 If you get stuck, create an issue on github and include a zip package for your project up to this point.
+
+### Quick overview
+A quick overview of what is happening
+
+```
+Frontend User -> Application Page
+
+   |    (not authenticated)
+   V
+Server.js -> Login Page (login.html)
+
+   |    (enters username and password)
+   V
+Frontend User -> Presses "Login"
+
+   |    (sends credentials)
+   V
+Frontend -> Backend (Server.js) -> getAPIKeyForUser
+
+   |    (generates API key using generateAPIKey)
+   V
+Backend -> Frontend: Username and API Key (set on cookie)
+
+   |    (page reloads)
+   V
+Frontend -> Reloads Page (sends new cookie)
+
+   |    (server.js reads cookie)
+   V
+Server.js -> Pushes Frontend User to Store Page (store.html)
+```
+
+## Store Page
+
+Now that we are authenticated, we want to show a selection of documents to the end user to select from. We will call this our store page.
+
+To setup this section, cover the `store.html` file from the `03_Integration_Workflow/project/public` path on the git repo to your project's public folder.
+
+Your root folder should similar to this:
+- 📁node_modules
+- 📂public
+    - 📄login.html
+    - 📄store.html
+- 📄backend.js
+- 📄database.json
+- 📄server.js
+- 📄package-lock.json
+- 📄package.json
+
+However to do this we need to answer a few questions:
+- Where do our store documents live?
+- How do we access them?
+- How do we show that info to the frontend?
+
+### Where will we keep our documents?
+Our store documents can live in one of three places:
+1. In the BackOffice. Thus being stored on your Publisher environment.
+2. Externally. They would be stored on a blob storage or a file share, and you would load them using the XML related APIs.
+3. Hybrid. The document IDs are stored externally in a database while the physical files are stored in the BackOffice.
+
+There are benefits and downsides to each option, which we will review below.
+
+| Location    | Benefits   | Downsides   | Suggested |
+|-------------|------------|-------------|-----------|
+| BackOffice  | The main benefit is that you can get started right away. Because everything is in a folder it is very easy to use the HTTP APIs to dynamically display documents. | If you want to use custom workspaces, view preferences, PDF export settings that change based on the document used then it is very difficult to tie these things to particular documents without a complex setup. In addition, if you require meta data for your frontend experience, such as displaying documents based on season or project, then you must use a complex folder structure which does not scale well. | ❌ No |
+| Externally  | All your document XMLs are stored in your own systems which gives you complete control. | The integration is more complex as you will need to have the systems in place to store the XML. | ✅ Yes |
+| Hybrid      | While you do not have complete control, you do have control over the meta data, because your frontend is using your database to display and manage documents. Only the physical XML is being stored in CHILI. | The integration is more complex as it requires a database or similar to track document IDs, but less complex that being completely external. | ✅ Yes |
+
+For this learning course, we are going to implement first the BackOffice as a location and then move over to the Hybrid model.
+
+### 🏢 BackOffice setup
+Because we rely on APIs that return files in a folder system, we will need to implement a folder structure that our frontend can use to display documents that are suppose to be live or documents that are stored by specific users from those documents that are still be worked on.
+
+For this learning course, you should create two folders in the Document section of the BackOffice:
+- StoreDocuments
+- UserDocuments
+
+All documents in the StoreDocuments folder will be displayed on our store page.
+User documents will be stored in sub-folders in the the UserDocuments folder.
+All other documents will not be known to our application.
+
+Once you have those folders, either move or create three new documents. Make sure the documents have some type of pictures, shapes, or text in them otherwise later on your previews will look blank.
+
+### Making our frontend show documents
+Create a file in root of our project folder of your project named `frontend.js`. All the JavaScript we will use will be pulled from `frontend.js` by our HTML pages.
+
+The store.html page is expecting a function called `renderStoreDocumentsFromBackOffice` which has a function signature like so:
+```ts
+(apiKey:string) => {documentID:string, previewURL:string}[]
+```
+
+This function takes the `apiKey` string and returns an array of objects that contain the document id and preview URL of the document.
+
+We can create the first version of our function in the `frontend.js` filled with some dummy data:
+```js
+export async renderStoreDocumentsFromBackOffice(apiKey) {
+    return {
+        documentID:"",
+        previewURL:"https://fastly.picsum.photos/id/925/200/300.jpg"
+    }
+}
+```
+
+### 🧪 Test dummy document in store
+Run the following command in the root directory of your project.
+
+```bash
+node ./server.js
+```
+
+In your terminal you will see the message.
+
+```
+Server running on port 3000
+```
+
+If you go to `http://localhost:3000` you will get a login page. Login in with whatever user you wish and the store page should load with single document card and a random image from picsum.
+
+<br/>
+
+⚠️ Something wrong?
+
+- If you get a message similar to `This site can’t be reached` or `This site can’t provide a secure connection` see [Test project setup](#Test-project-setup).
+- If you only see a blank store with no document cards, then there are two most likely scenarios:
+    - You did not properly place your `frontend.js` file in your `public` folder
+    - You misnamed `frontend.js` file.
+    - You misnamed `renderStoreDocumentsFromBackOffice`.
+    - You forgot to export `renderStoreDocumentsFromBackOffice`.
+
+If you get stuck, create an issue on github and include a zip package for your project up to this point.
+
+ `resourceGetTreeLevel` method from the `chiliBackOfficeInterface.js` file
