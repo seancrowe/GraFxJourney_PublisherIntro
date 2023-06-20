@@ -1,6 +1,6 @@
 // TODO:
 //  -Finish these out
-//  -Leave brief explanations of enpoints that weren't covered in the main lesson
+//  -Leave brief explanations of endpoints that weren't covered in the main lesson
 //  -Re: error handling -- Maybe just have it on generateAPIKey for now (this isn't a general web dev course, they should know
 //      how to generally do that sort of thing coming in; not our responsibility to teach)
 
@@ -20,7 +20,7 @@ export async function generateAPIKey({ baseURL, userName, password, environment 
         })
     })
 
-    // You get any error status if your write the body correctly, and you provide the query paramter
+    // You get any error status if your write the body correctly, and you provide the query parameter
     // We stop the 400 that would be caused by an empty password
     if (!response.ok) {
         
@@ -32,16 +32,15 @@ export async function generateAPIKey({ baseURL, userName, password, environment 
     try {
         const responseDoc = (new DOMParser()).parseFromString(x, "application/xml");
         if (responseDoc.firstChild.getAttribute("succeeded") == "false") {
-            
+            return responseDoc.firstChild.getAttribute("key");
+        }
+        else {
+            // Handle wrong password
         }
     }
     catch (e) {
-
+        // Handle XML issue
     }
-
-    if ()
-
-    // Handle the odd error cases
 }
 
 //ResourceGetTreeLevel
