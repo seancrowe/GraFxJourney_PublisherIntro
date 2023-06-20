@@ -28,7 +28,7 @@ const server = http.createServer((req, res) => {
     else {
       fs.readFile(`${publicPath}/login.html`, "utf8", (err, content) => {
         if (err) {
-          res.writeHead(403, { "Content-Type": "text/plain" });
+          res.writeHead(404, { "Content-Type": "text/plain" });
           res.end("No login page found.");
           console.error(err);
         } else {
@@ -52,7 +52,7 @@ const server = http.createServer((req, res) => {
       return;
     }
     catch(err) {
-        res.writeHead(403, { "Content-Type": "text/plain" });
+        res.writeHead(404, { "Content-Type": "text/plain" });
         res.end(`No ${req.url} found.`);
         console.error(err);
         return;
