@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cards in Grid</title>
+    <style>
+      body {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      #top-bar {
+          background-color: blue;
+          height: 25px;
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+          padding: 10px 20px;
+      }
+
+      #top-bar .menu a {
+          color: white;
+          margin-left: 20px;
+          text-decoration: none;
+      }
+
+      #card-grid {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-around;
+          padding: 20px;
+      }
+
+      .card {
+          width: 200px;
+          height: 250px;
+          border: 1px solid #000;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+          margin: 10px;
+      }
+
+      .card-image {
+          width: 100%;
+          height: auto;
+      }
+
+      .card-button {
+          align-self: center;
+      }
+
+      .load-data-button {
+          margin-left: 20px;
+          margin-right: 20px;
+          padding: 5px;
+          font-size: 14px;
+          background-color: #ff6600;
+          border: none;
+          color: white;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          transition-duration: 0.4s;
+          cursor: pointer;
+      }
+
+      .load-data-button:hover {
+          background-color: #ff0066;
+          color: white;
+      }
+
+    </style>
+</head>
+<body>
+    <div id="top-bar">
+        <div class="menu">
+            <a href="#orders">Orders</a>
+            <a href="#logout">Logout</a>
+            <button id="load-data-button" class="load-data-button" onclick="switchData()">
+              Load Data From Database
+            </button>
+        </div>
+    </div>
+    <div id="card-grid">
+        <!-- <div class="card">
+            <h3 class="card-title">Title</h3>
+            <img class="card-image" src="image_url" alt="image">
+            <button class="card-button">Edit</button>
+        </div> -->
+        <!-- Add as many cards as you want here -->
+    </div>
+    <script>
+      function switchData() {
+          const topBar = document.getElementById('top-bar');
+          const loadDataButton = document.getElementById('load-data-button');
+
+          if (topBar.style.backgroundColor == "blue") {
+            topBar.style.backgroundColor = 'teal';
+            loadDataButton.innerHTML = 'Load Data From BackOffice';
+          }
+          else {
+            topBar.style.backgroundColor = 'blue';
+            loadDataButton.innerHTML = 'Load Data From Database';
+          }
+      }
+    </script>
+    <script type="module">
+     
+     (async () => {
+      try {
+      const {hi} = await import("./frontend.js");
+      }
+      catch(e) {
+        console.log(e);
+      }
+      console.log("hi")
+      //console.log(hi());
+    })()
+    </script>
+</body>
+</html>
