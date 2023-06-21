@@ -45,7 +45,7 @@ Don't forget to `ctrl` + `c` to terminate the node process before moving onto th
     - If everything in your URL looks correct, then double check to make sure your `server.js` script is running. If you see your "shell prompt" or "command prompt", then the script is not running. Potentially it may be blocked by antivirus or another server is running on port 3000. Look for any error logs.
 - If you get a message similar to `This site can’t provide a secure connection`, that usually means that you are using https instead of http in your URL. Check your URL and remove the s from `https`.
 
-If you get stuck, create an issue on github and include a zip package for your project up to this point.
+If you get stuck, create an issue on github and include a link to your repo for your project up to this point.
 
 ## Login
 For our simple application we will have a very basic login page. We are going to use a simple example to both generate API keys for GraFx Publisher and discuss how API keys are used on the frontend vs backend.
@@ -185,7 +185,7 @@ Great! This is exactly what we wanted to happen. Don't forget to `ctrl` + `c` to
 - If you do not get the error message "No store found." but instead get an site with a blue navigation at the top, then you probably copied over too many files from `03_Integration_Workflow/project/public` to your project's `public` folder. Please see the above root folder diagram. Your `public` folder should only have one file in it: `login.html`.
     
 
-If you get stuck, create an issue on github and include a zip package for your project up to this point.
+If you get stuck, create an issue on github and include a link to your repo for your project up to this point.
 
 ### Quick overview
 A quick overview of what is happening
@@ -274,18 +274,18 @@ Create a file in root of our project folder of your project named `frontend.js`.
 
 The store.html page is expecting a function called `renderStoreDocumentsFromBackOffice` which has a function signature like so:
 ```ts
-(apiKey:string) => {documentID:string, previewURL:string}[]
+() => {documentID:string, previewURL:string}[]
 ```
 
 This function takes the `apiKey` string and returns an array of objects that contain the document id and preview URL of the document.
 
 We can create the first version of our function in the `frontend.js` filled with some dummy data:
 ```js
-export async renderStoreDocumentsFromBackOffice(apiKey) {
-    return {
+export async renderStoreDocumentsFromBackOffice() {
+    return [{
         documentID:"",
         previewURL:"https://fastly.picsum.photos/id/925/200/300.jpg"
-    }
+    }]
 }
 ```
 
@@ -309,12 +309,50 @@ If you go to `http://localhost:3000` you will get a login page. Login in with wh
 ⚠️ Something wrong?
 
 - If you get a message similar to `This site can’t be reached` or `This site can’t provide a secure connection` see [Test project setup](#Test-project-setup).
-- If you only see a blank store with no document cards, then there are two most likely scenarios:
+- If you only see a blank store with no document cards, then there are four most likely scenarios:
     - You did not properly place your `frontend.js` file in your `public` folder
-    - You misnamed `frontend.js` file.
-    - You misnamed `renderStoreDocumentsFromBackOffice`.
-    - You forgot to export `renderStoreDocumentsFromBackOffice`.
+    - You misnamed the `frontend.js` file.
+    - You misnamed the `renderStoreDocumentsFromBackOffice` function in the `frontend.js` file.
+    - You forgot to export `renderStoreDocumentsFromBackOffice` in the `frontend.js` file.
 
-If you get stuck, create an issue on github and include a zip package for your project up to this point.
+If you get stuck, create an issue on github and include a link to your repo for your project up to this point.
 
- `resourceGetTreeLevel` method from the `chiliBackOfficeInterface.js` file
+
+
+### Making our store show documents from the StoreDocuments folder
+Great that we have a dummy document, but we need to show documents from the BackOffice in the StoreDocuments folder.
+
+To accomplish this, we will need to have our `renderStoreDocumentsFromBackOffice` function call an endpoint on our backend. The endpoint on our backend will then call the  `resourceGetTreeLevel` method from the `chiliBackOfficeInterface.js` file to and return to us a list of documents.
+
+In this case, `server.js` is expecting you to call the endpoint `/api/documents-store/backoffice`.
+
+This endpoint was created in `server.js` and all it does is pass the request onto a function in our `backend.js` called `getDocumentsFromBackOffice`.
+
+__🤔 Why are we doing this?__ 
+
+Great question. If you are confused why are we calling a custom endpoint on our backend instead of just calling `ResourceGetTreeLevel` directly on the frontend or using `chiliBackOfficeInterface.js` on the frontend, then you will soon be enlighten.
+
+The reason we should not call `ResourceGetTreeLevel` on the frontend is because on the frontend we are going to use the `endUser` user, which has limited permission. Remember setting this user up: [Setting up the end user](#setting-up-the-end-user).
+
+This API key cannot call `ResourceGetTreeLevel`, it is not allowed.
+
+Therefore we must use a different API key, one that has all permissions. Specially, we will use the the `devUser` key we created in Chapter 02.
+
+Because this key has all the permissions, it must never leave the backend.
+
+Let's create a new function in `backend.js` called `getDocumentsFromBackOffice` with a function signature:
+```ts
+(path:string) => {name:string, id:string}[]
+```
+
+Lets write the first version of this function.
+```js
+async function getDocumentsFromBackOffice(path) {
+    return [{
+        name:"",
+        id:""getDocumentsFromBackOffice
+    }]
+}
+```
+
+
