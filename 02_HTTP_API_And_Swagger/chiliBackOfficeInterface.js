@@ -76,7 +76,19 @@ export async function downloadAssets({ baseURL, resourceType, id }) {
 
 }
 
-//add in a section for Get/SetVariableValues
+//DocumentSetVariableValues
+export async function documentSetVariableValues({ baseURL, itemID, varXML}) {
+    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/documents/${itemID}/variablevalues`, {
+        method: "POST",
+        headers: {
+            "api-key": apikey,
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            "varXML": varXML
+        })
+    });
+}
 
 //DocumentCreatePDF
 export async function documentCreatePDF({ baseURL, itemID, settingsXML }) {

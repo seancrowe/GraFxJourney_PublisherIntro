@@ -1,3 +1,7 @@
+```
+THIS SECTION MAY BE AXED FOR CREATE
+```
+
 - Event listener for SelectedFrameChanged
 - Check frame type on click -- getObject
 - Make this an image uploader instead?

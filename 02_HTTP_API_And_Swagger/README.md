@@ -21,7 +21,7 @@ https://{environment}.chili-publish.online/swagger/ui/index/
 
 The swagger UI is broken up into sections: Resource, System, Spelling, and Settings. These unfortunately do not relate to the sections similar named in the BackOffice application.
 
-![Picture of the sections]
+![Picture of the sections](assets/swaggerSections.png)
 
 However, as a developer, you will most likely only care about Resource and System.
 
@@ -29,7 +29,7 @@ The swagger documentation documents all endpoints used by Publisher and the Back
 
 Each endpoint has a HTTP request method (verb), endpoint path, and a related method name.
 
-![Picture showing the above]
+![Picture showing the above](assets/exampleEndpoint.png)
 
 Most commonly, CHILI developers refer to these endpoints by their related method name. So for the above picture, many would call that the `GenerateAPIKey` endpoint. Historially, Publisher used the SOAP messaging protocol which defined everything in terms of methods. Later, these SOAP methods were converted into HTTP endpoints.
 
@@ -39,11 +39,11 @@ To get an API key, you generate on using GenerateAPIKey in the swagger UI. Howev
 
 As mentioned in the BackOffice Intro[Needs Link], the BackOffice uses the same API calls as found in the swagger UI. So each call in the BackOffice has an API key attached to the header of the request.
 
-![Picture of API key on header in network tab in BackOffice]
+![Picture of API key on header in network tab in BackOffice](assets/backofficeApi.png)
 
 You can grab this API key and paste it into the input at the vert top of the swagger UI page. Then press `Explore`.
 
-![Picture of the input with button]
+![Picture of the input with button](assets/swaggerExplore.png)
 
 Once `Explore` is pushed, all requests made in the swagger UI will have this API key attached to request.
 
@@ -87,16 +87,16 @@ You cannot assume that every failed call will be reflected in its status code, h
     - Giving incorrect credentials results in a 201 success code, but with an error in the response body
     - If the given environment doesn't exist, you will still get a 201 success code with an error in the response body
     - If the request body isn't formatted correctly, you will get a 400 response code
-These are just the different kinds of failures you can see on a relatively simple enpoint like `GenerateAPIKey`, so be sure to keep an eye on both the response code and the response body itself anytime you make use of the CHILI API library.
+These are just the different kinds of failures you can see on a relatively simple endpoint like `GenerateAPIKey`, so be sure to keep an eye on both the response code and the response body itself anytime you make use of the CHILI API library.
 
 
 
 ## Building ResourceGetTreeLevel Function
 Once we have an API key, we can start to fully explore the rest of the API library. One of the more commonly used endpoints by developers is `ResourceGetTreeLevel`. Put simply, this endpoint returns a list of the resources present starting at the specified parent folder in an environment's BackOffice. When looking at this call in Swagger, you can immediately see some minor differences; this call has both a required parameter in `resourceName` as well as a number of optional parameters, and this endpoint does not have a request body. Another thing to spot is that this endpoint's actual URL changes based on one of the parameters (`resourceName` in this case).  
-![Parameter in URL](image here pls)
+![Parameter in URL](assets/paramInURL.png)
 
 A major difference that isn't immediately visible, however, is that this endpoint, and most every other endpoint, reequires an API key in its request headers. Swagger does this automatically for all requests when you input an API key in the input field at the top of the page. You can confirm this for yourself by looking at the `Curl` after making a request via Swagger.  
-![Curl](put an image here pls)  
+![Curl](assets/curl.png)
 
 When building these function calls in actual development, however, you need to include the API key in your request headers yourself. Included in this training section is a .js file that has some examples of various API calls built using `fetch` where you can see some examples of what the request headers should include.
 ## DocumentCreatePDF
