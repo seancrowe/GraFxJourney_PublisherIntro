@@ -1,9 +1,9 @@
-# Understanding The Integration Workflow
-In this section we going to using our `chiliBackOfficeInterface.js` and knowledge of API endpoints to build out an simple CHILI integration.
+# Building a Store
+In this section we going to using our `chiliBackOfficeInterface.js` and knowledge of API endpoints to build out an simple Publisher store.
 
-This integration will include:
+In this chapter will build out:
 - A login screen, where we will attach a CHILI API key to the session.
-- A page to display our documents that a user can select.
+- A page to display our documents from the BackOffice.
 - A page to load a selected template for a user to edit, save, and generate output.  🏃‍♂️💨 - skip until after CREATE
 - A page to display all the documents a user has created, and to generate output. 🏃‍♂️💨 - skip until after CREATE
 
