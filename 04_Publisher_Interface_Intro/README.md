@@ -3,6 +3,7 @@
     -Set up a CHILI doc to use for this section
     -Write up section for save + pdfgen buttons
     -Carryover finished section 3 project files to here (at least relevant ones)
+    -Clean up comments and editor links in code snippets here once everything is fully done
  ```
  
  # Introduction to Publisher Interface
