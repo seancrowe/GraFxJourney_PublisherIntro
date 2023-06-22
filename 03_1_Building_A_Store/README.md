@@ -1,5 +1,3 @@
-- Skipping this for now and giving the rest of the sections priority
-
 # Understanding The Integration Workflow
 In this section we going to using our `chiliBackOfficeInterface.js` and knowledge of API endpoints to build out an simple CHILI integration.
 
