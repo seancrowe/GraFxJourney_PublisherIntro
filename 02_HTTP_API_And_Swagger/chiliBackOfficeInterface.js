@@ -5,7 +5,7 @@
 //      how to generally do that sort of thing coming in; not our responsibility to teach)
 
 //GenerateAPIKey
-export async function generateAPIKey({ baseURL, userName, password, environment }) {
+export async function generateAPIKey({baseURL, userName, password, environment}) {
     // Endpoint for generate API key found in swagger: https://ft-nostress.chili-publish.online/swagger/ui/index#!/System/RestApi_GenerateApiKey
     const response = await fetch(`${baseURL}/rest-api/v1.2/system/apikey?environmentNameOrURL=${environment}`, {
         method: "POST",
@@ -44,11 +44,11 @@ export async function generateAPIKey({ baseURL, userName, password, environment 
 }
 
 //ResourceGetTreeLevel
-export async function resourceGetTreeLevel({ baseURL, resourceName, parentFolder, numLevels, includeSubDirectories, includeFiles }) {
+export async function resourceGetTreeLevel({apiKey, baseURL, resourceName, parentFolder, numLevels, includeSubDirectories, includeFiles}) {
     const response = await fetch(`${baseURL}/rest-api/v1.2/resources/${resourceName}/treelevel?parentFolder=${parentFolder}&numLevels=${numLevels}&includeSubDirectories=${includeSubDirectories}&includeFiles=${includeFiles}`, {
         method: "GET",
         headers: {
-            "api-key": apikey
+            "api-key": apiKey
         }
     });
 
@@ -59,11 +59,11 @@ export async function resourceGetTreeLevel({ baseURL, resourceName, parentFolder
 }
 
 //DownloadAssets - preview
-export async function downloadAssets({ baseURL, resourceType, id }) {
+export async function downloadAssets({ apiKey, baseURL, resourceType, id }) {
     const response = await fetch(`${baseURL}/rest-api/v1.2/resources/${resourceType}/download?id=${id}&async=false`, {
         method: "GET",
         headers: {
-            "api-key": apikey
+            "api-key": apiKey
         }
     });
 
@@ -79,11 +79,11 @@ export async function downloadAssets({ baseURL, resourceType, id }) {
 //add in a section for Get/SetVariableValues
 
 //DocumentCreatePDF
-export async function documentCreatePDF({ baseURL, itemID, settingsXML }) {
+export async function documentCreatePDF({apiKey, baseURL, itemID, settingsXML}) {
     const response = await fetch(`${baseURL}/rest-api/v1.2/resources/documents/${itemID}/representations/pdf`, {
         method: "POST",
         headers: {
-            "api-key": apikey,
+            "api-key": apiKey,
             "content-type": "application/json"
         },
         body: JSON.stringify({
@@ -98,11 +98,11 @@ export async function documentCreatePDF({ baseURL, itemID, settingsXML }) {
 }
 
 //DocumentCreateTempPDF
-export async function documentCreateTempPDF({baseURL, settingsXML, docXML}) {
+export async function documentCreateTempPDF({apiKey, baseURL, settingsXML, docXML}) {
     const response = await fetch(`${baseURL}/rest-api/v1.2/resources/documents/tempxml/pdf`, {
         method: "POST",
         headers: {
-            "api-key": apikey,
+            "api-key": apiKey,
             "content-type": "application/json"
         },
         body: JSON.stringify({
@@ -119,11 +119,11 @@ export async function documentCreateTempPDF({baseURL, settingsXML, docXML}) {
 }
 
 //TaskGetStatus
-export async function taskGetStatus({baseURL, taskID}) {
+export async function taskGetStatus({apiKey, baseURL, taskID}) {
     const response = await fetch(`${baseURL}/rest-api/v1.2/system/tasks/${taskID}/status`, {
         method: "GET",
         headers: {
-            "api-key": apikey
+            "api-key": apiKey
         }
     });
 
