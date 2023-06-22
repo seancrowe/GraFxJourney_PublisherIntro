@@ -59,8 +59,8 @@ export async function resourceGetTreeLevel({apiKey, baseURL, resourceName, paren
 }
 
 //DownloadAssets - preview
-export async function downloadAssets({ apiKey, baseURL, resourceType, id }) {
-    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/${resourceType}/download?id=${id}&async=false`, {
+export async function downloadAssets({ apiKey, baseURL, resourceType, id, type }) {
+    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/${resourceType}/download?id=${id}&type=${type}&async=false`, {
         method: "GET",
         headers: {
             "api-key": apiKey
