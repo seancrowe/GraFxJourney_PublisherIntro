@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cards in Grid</title>
+    <style>
+      body {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      #top-bar {
+          background-color: blue;
+          height: 25px;
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+          padding: 10px 20px;
+      }
+
+      #top-bar .menu a {
+          color: white;
+          margin-left: 20px;
+          text-decoration: none;
+      }
+
+      #card-grid {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-around;
+          padding: 20px;
+      }
+
+      .card {
+          width: 200px;
+          height: 400px;
+          border: 1px solid #000;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+          margin: 10px;
+      }
+
+      .card-image {
+          width: 100%;
+          height: 250px;
+      }
+
+      .card-button {
+          align-self: center;
+      }
+
+      .load-data-button {
+          margin-left: 20px;
+          margin-right: 20px;
+          padding: 5px;
+          font-size: 14px;
+          background-color: #ff6600;
+          border: none;
+          color: white;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          transition-duration: 0.4s;
+          cursor: pointer;
+      }
+
+      .load-data-button:hover {
+          background-color: #ff0066;
+          color: white;
+      }
+
+    </style>
+</head>
+<body>
+    <div id="top-bar">
+        <div class="menu">
+            <a href="#orders">Orders</a>
+            <a href="#logout">Logout</a>
+            <button id="load-data-button" class="load-data-button" onclick="switchData()">
+              Load Data From Database
+            </button>
+        </div>
+    </div>
+    <div id="card-grid"></div>
+    <script>
+        const cookie = JSON.parse(document.cookie);
+        let {username, apiKey, loadFromBO=true} = cookie;
+
+        function switchData(setLoadFromBO) {
+
+            loadFromBO = (setLoadFromBO != null) ? setLoadFromBO : !loadFromBO;
+
+            console.log(loadFromBO)
+            const topBar = document.getElementById('top-bar');
+            const loadDataButton = document.getElementById('load-data-button');
+
+            if (!loadFromBO) {
+                topBar.style.backgroundColor = 'teal';
+                loadDataButton.innerHTML = 'Load Data From BackOffice';
+            }
+            else {
+                topBar.style.backgroundColor = 'blue';
+                loadDataButton.innerHTML = 'Load Data From Database';
+            }
+
+            renderDocuments(loadFromBO);
+            document.cookie = JSON.stringify({...cookie, loadFromBO});
+        }
+
+        async function renderDocuments(loadFromBO) {
+
+            const cardGrid = document.getElementById("card-grid");
+            cardGrid.innerHTML = "";
+
+                let documents = [];
+
+            if (loadFromBO) {
+                try {
+                    const resp = await fetch("/api/getdocumentsfrombackoffice");
+                    documents = JSON.parse(await resp.text());
+                }
+                catch(e) {
+                    console.log(e);
+                }
+            }
+
+            documents.forEach(doc => {
+                const cardDiv = document.createElement("div");
+                cardDiv.setAttribute("class","card");
+                cardDiv.innerHTML = `<h3 class="card-title">${doc.name}</h3>
+        <img class="card-image" src="${doc.previewURL ?? ""}" alt="image">
+        <button class="card-button" onClick="editDoc('${doc.id}', '${doc.name}')">Edit</button>`;
+                cardGrid.appendChild(cardDiv);
+            });
+                        
+        }
+
+        async function editDoc(id, name) {
+            const resp = await fetch("/api/copydocument", {
+                method:"POST",
+                body: JSON.stringify({id, name})
+                
+            });
+            if (resp.ok) {
+                window.location.href = "/editor?id=" + JSON.parse(await resp.text()).id
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            switchData(loadFromBO);
+        });
+    </script>
+</body>
+</html>

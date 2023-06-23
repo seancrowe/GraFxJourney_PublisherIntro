@@ -26,10 +26,31 @@
         </div>
         <div>
             <!-- This iframe will hold the CHILI Publisher editor -->
-            <iframe></iframe>
+            <iframe style="width:600px; height:600px"></iframe>
         </div>
     </div>
-    <script type="module" src="./script.js"> </script>
+    <script type="module">
+      window.chiliSession = JSON.parse(document.cookie);
+      const urlString = window.location.href;
+      const url = new URL(urlString);
+      window.chiliSession.docID = url.searchParams.get("id");
+
+      console.log(chiliSession);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        import("./frontend.js").then(({main}) => {
+        main(chiliSession.apiKey, chiliSession.baseURL, chiliSession.environment, chiliSession.docID);
+      })
+      .catch((e) => {
+        console.log(e);
+        document.getElementsByTagName("iframe")[0].src = `${chiliSession.baseURL}/${chiliSession.environment}/editor_html.aspx?doc=${chiliSession.docID}&apiKey=${chiliSession.apiKey}`;
+        document.getElementById("editorScreen").style.display = "block";
+      });
+    })
+
+      
+
+    </script>
 </body>
 
 </html>
