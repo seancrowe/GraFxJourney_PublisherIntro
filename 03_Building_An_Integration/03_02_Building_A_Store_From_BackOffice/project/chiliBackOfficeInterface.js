@@ -1,3 +1,6 @@
+import {fetch} from "cross-fetch";
+import {DOMParser} from "@xmldom/xmldom";
+
 // TODO:
 //  -Finish these out
 //  -Leave brief explanations of endpoints that weren't covered in the main lesson
@@ -6,40 +9,40 @@
 
 //GenerateAPIKey
 export async function generateAPIKey({baseURL, userName, password, environment}) {
-    // Endpoint for generate API key found in swagger: https://ft-nostress.chili-publish.online/swagger/ui/index#!/System/RestApi_GenerateApiKey
-    const response = await fetch(`${baseURL}/rest-api/v1.2/system/apikey?environmentNameOrURL=${environment}`, {
-        method: "POST",
-        headers: {
-            "content-type": "application/json",
-        },
-        body: JSON.stringify({
-            // We have to check if the userName is an empty string, because if it is, the endpoint will return status 400
-            "userName": (userName == "") ? " " : userName,
-            // We have to check if the password is an empty string, because if it is, the endpoint will return status 400
-            "password": (password == "") ? " " :  password
-        })
-    })
-
-    // You get any error status if your write the body correctly, and you provide the query parameter
-    // We stop the 400 that would be caused by an empty password
-    if (!response.ok) {
-        
-    }
-
-    const responseXmlString = await response.text();
-
-    // API key will return XML with "succeeded={true/false}", if that is false then have to check errorMessage
     try {
-        const responseDoc = (new DOMParser()).parseFromString(x, "application/xml");
-        if (responseDoc.firstChild.getAttribute("succeeded") == "false") {
+        // Endpoint for generate API key found in swagger: https://ft-nostress.chili-publish.online/swagger/ui/index#!/System/RestApi_GenerateApiKey
+        const response = await fetch(`${baseURL}/rest-api/v1.2/system/apikey?environmentNameOrURL=${environment}`, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify({
+                // We have to check if the userName is an empty string, because if it is, the endpoint will return status 400
+                "userName": (userName == "") ? " " : userName,
+                // We have to check if the password is an empty string, because if it is, the endpoint will return status 400
+                "password": (password == "") ? " " :  password
+            })
+        })
+
+        // You get any error status if your write the body correctly, and you provide the query parameter
+        // We stop the 400 that would be caused by an empty password
+        if (!response.ok) {
+            
+        }
+
+        const responseXmlString = await response.text();
+
+        // API key will return XML with "succeeded={true/false}", if that is false then have to check errorMessage
+        const responseDoc = (new DOMParser()).parseFromString(responseXmlString, "application/xml");
+        if (responseDoc.firstChild.getAttribute("succeeded") != "false") {
             return responseDoc.firstChild.getAttribute("key");
         }
         else {
-            // Handle wrong password
+            throw new Error("credentials are wrong");
         }
     }
     catch (e) {
-        // Handle XML issue
+        throw e;
     }
 }
 
@@ -52,6 +55,11 @@ export async function resourceGetTreeLevel({apiKey, baseURL, resourceName, paren
         }
     });
 
+    if (!response.ok) {
+        throw new Error(response.status);
+    }
+
+    return await response.text();
     //error handling off response code here
     //maaayyybbbe not an error, but if the parent folder doesn't exist, you get a 200 with an empty tree
     //500 for incorrect resourceType
@@ -76,19 +84,7 @@ export async function downloadAssets({ apiKey, baseURL, resourceType, id, type }
 
 }
 
-//DocumentSetVariableValues
-export async function documentSetVariableValues({ baseURL, itemID, varXML}) {
-    const response = await fetch(`${baseURL}/rest-api/v1.2/resources/documents/${itemID}/variablevalues`, {
-        method: "POST",
-        headers: {
-            "api-key": apikey,
-            "content-type": "application/json"
-        },
-        body: JSON.stringify({
-            "varXML": varXML
-        })
-    });
-}
+//add in a section for Get/SetVariableValues
 
 //DocumentCreatePDF
 export async function documentCreatePDF({apiKey, baseURL, itemID, settingsXML}) {

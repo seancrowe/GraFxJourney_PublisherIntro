@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Publisher Interface Intro</title>
+</head>
+
+<body>
+    <div id="loadingScreen" style="display:flex">
+        <h3>Loading...</h3>
+    </div>
+    <div id="editorScreen" style="display:none">
+        <div id="ui">
+            <input id="varInput" type="text" placeholder="Variable Text Input" />
+            <button id="updateVariablesButton">
+                Update Variables
+            </button>
+            <button id="saveButton">
+                Save Document
+            </button>
+            <button id="outputPDFButton">
+                Generate PDF
+            </button>
+        </div>
+        <div>
+            <!-- This iframe will hold the CHILI Publisher editor -->
+            <iframe></iframe>
+        </div>
+    </div>
+    <script type="module">
+      window.chiliSession = JSON.parse(document.cookie);
+      const urlString = window.location.href;
+      const url = new URL(urlString);
+      window.chiliSession.docID = url.searchParams.get("id");
+
+      console.log(chiliSession);
+
+      import("./frontend.js").then(({main}) => {
+        main();
+      })
+      .catch(() => {
+        document.getElementsByTagName("iframe")[0].src = `${chiliSession.baseURL}/${chiliSession.environment}/editor_html.aspx?doc=${chiliSession.docID}&apiKey=${chiliSession.apiKey}`;
+        document.getElementById("editorScreen").style.display = "block";
+      });
+
+    </script>
+    <script type="module" src="./frontend.js"> </script>
+</body>
+
+</html>
