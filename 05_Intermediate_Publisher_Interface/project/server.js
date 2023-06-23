@@ -1,7 +1,7 @@
 import http from "http";
 import  fs from "fs";
 import path from "path";
-import {copyDocumentForUser, getAPIKeyForUser, getDocumentsFromBackOffice, getDocumentPreview} from "./backend.js";
+import {copyDocumentForUser, getAPIKeyForUser, getDocumentsFromBackOffice, getDocumentPreview, saveDocument} from "./backend.js";
 import { fileURLToPath } from "url";
 
 const port = 3000; // Set the desired port number
@@ -83,10 +83,28 @@ const server = http.createServer((req, res) => {
             res.writeHead(500, { "Content-Type": "text/plain" });
             res.end(e.toString());
             console.error(e);
+          })
         })
-        })
-        
+      }
 
+      if (url == "/api/savedocument") {
+
+        let body = "";
+
+        req.on("data", (chunk) => body += chunk)
+
+        req.on("end", () => {
+          const {id, xml} = JSON.parse(body);
+          saveDocument(id, xml).then(content => {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(content));
+          })
+          .catch(e => {
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.end(e.toString());
+            console.error(e);
+          })
+        })
       }
 
       if (url.includes("/api/getdocumentpreview/")) {

@@ -128,6 +128,20 @@ export async function copyDocumentForUser(username, documentID, documentName) {
     }
 }
 
+export async function saveDocument(documentID, documentXML) {
+    
+    console.log(documentXML);
+
+    // API Key is already hardcoded at top of the file 👇👇
+    const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
+
+    // ResourceItemSave do things
+    // return something like {saved:true}
+    // or throw error is something goes wrong
+
+    return {saved:true}
+}
+
 async function getAPIKey(credentials, documentEntry) {
     const cache = fakeDatabaseGetDocument("cache");
 
