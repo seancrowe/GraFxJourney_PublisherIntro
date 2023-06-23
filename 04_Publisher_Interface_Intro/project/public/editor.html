@@ -39,13 +39,13 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         import("./frontend.js").then(({main}) => {
-        main(chiliSession.apiKey, chiliSession.baseURL, chiliSession.environment, chiliSession.docID);
-      })
-      .catch((e) => {
-        console.log(e);
-        document.getElementsByTagName("iframe")[0].src = `${chiliSession.baseURL}/${chiliSession.environment}/editor_html.aspx?doc=${chiliSession.docID}&apiKey=${chiliSession.apiKey}`;
-        document.getElementById("editorScreen").style.display = "block";
-      });
+            main(chiliSession.apiKey, chiliSession.baseURL, chiliSession.environment, chiliSession.docID);
+        })
+        .catch((e) => {
+            console.log(e);
+            document.getElementsByTagName("iframe")[0].src = `${chiliSession.baseURL}/${chiliSession.environment}/editor_html.aspx?doc=${chiliSession.docID}&apiKey=${chiliSession.apiKey}`;
+            document.getElementById("editorScreen").style.display = "block";
+        });
     })
 
       
