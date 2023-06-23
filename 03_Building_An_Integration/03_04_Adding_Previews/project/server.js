@@ -105,7 +105,7 @@ const server = http.createServer((req, res) => {
 
       try {
         const content = fs.readFileSync(`${publicPath}${fileName}`);
-        res.writeHead(200, { "Content-Type": "text/html" });
+        res.writeHead(200, { "Content-Type": (fileName.includes(".js")) ? "text/javascript" : "text/html" });
         res.end(content);
       }
       catch(err) {
