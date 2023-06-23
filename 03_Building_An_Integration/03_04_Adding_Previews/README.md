@@ -3,7 +3,7 @@ The store page is showing our templates from the BackOffice, but there is no pre
 
 The reason there is no previews is because I lied to you. Really `server.js` expects `getDocumentsFromBackOffice` to return a signature like:
 ```ts
-(path:string) => {name:string, id:string, previewURL:string}[]
+(path:string) => Promise<{name:string, id:string, previewURL:string}[]>
 ```
 Right now our function `getDocumentsFromBackOffice` in `backend.js` looks like this:
 ```js
@@ -87,49 +87,44 @@ import {downloadAssets, generateAPIKey, resourceGetTreeLevel} from `./chiliBackO
 Now we are ready to use our `downloadAssets` function in `getDocumentPreview`. First lets add `downloadAssets` with some dummy data.
 
 ```js
-async function getDocumentPreview(documentID) {
+export async function getDocumentPreview(documentID) {
   try {
     return await downloadAssets({
-       "apiKey", 
-       "baseURL", 
-       "resourceType", 
-       "id", 
-       "type"
+       apiKey: "", 
+       baseURL: "", 
+       resourceType: "", 
+       id: "", 
+       type: ""
     })
   }
   catch(e) {
-
+    throw e;
   }
 }
 ```
 Let's update our function with real data:
-- We can replace "apiKey" with the value from `getAPIKey` function using the `envUserCredentials` object.
-- We can replace the "baseURL" with the variable `baseURL`.
-- "resourceType" will be "Documents".
-- "id" will be `documentID`.
-- "type" we can replace with "low", "medium", "high", or "highest". The best option for our use case would be "medium"
+- We can replace apiKey with the value from `getAPIKey` function using the `envUserCredentials` object.
+- We can replace the baseURL with the variable `baseURL`.
+- resourceType will be "Documents".
+- id will be `documentID`.
+- type we can replace with "low", "medium", "high", or "highest". The best option for our use case would be "medium"
 
 ```js
-async function getDocumentPreview(documentID) {
+export async function getDocumentPreview(documentID) {
   try {
 
-    const apiKey = await generateAPIKey({ 
-        baseURL, 
-        envUserCredentials.name, 
-        envUserCredentials.password, 
-        envUserCredentials.environment
-    });
+    const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
 
     return await downloadAssets({
        apiKey, 
-       baseURL, 
-       "Documents", 
-       documentID, 
-       "medium"
+       baseURL:baseURL, 
+       resourceType: "Documents", 
+       id: documentID, 
+       type: "medium"
     })
   }
   catch(e) {
-
+    throw e
   }
 }
 ```
@@ -142,18 +137,19 @@ export async function getDocumentsFromBackOffice(path) {
 
     try {
 
-        const apiKey = getAPIKey(envUserCredentials, "envuserkey");
+        const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
 
-        const tree = await resourceGetTreeLevel({
-            apiKey,
-            baseURL,
-            "Documents",
-            path,
-            1,
-            true,
-            true})
+        const resp = await resourceGetTreeLevel({
+            apiKey: apiKey,
+            baseURL: baseURL,
+            resourceName: "Documents",
+            parentFolder: path,
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
+        });
 
-        const xmlDoc = (new DOMParser()).parseFromString(tree, "text/xml");
+        const xmlDoc = (new DOMParser()).parseFromString(resp, "text/xml");
 
         const itemElements = xmlDoc.getElementsByTagName("item");
 
@@ -163,17 +159,18 @@ export async function getDocumentsFromBackOffice(path) {
             const previewURL = "/api/getdocumentpreview/" + id; // We generate the previewURL
             const isFolder = item.getAttribute("isFolder") === "true";
 
-            if (!isFolder) {
+            if (isFolder || id == "") {
                 return null;
             }
 
-            return { id, name, previewURL}; // Then add the previewURL to the return.
+            return { id, name, previewURL };
         }).filter(Boolean);
 
         return items;
     }
     catch(e){
-
+        console.log(e);
+        throw e;
     }
 }
 ```
