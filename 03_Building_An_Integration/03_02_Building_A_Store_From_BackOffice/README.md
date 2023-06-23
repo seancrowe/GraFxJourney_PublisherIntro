@@ -149,7 +149,7 @@ export async function getDocumentsFromBackOffice(path) {
             apiKey: "apiKey",
             baseURL: "https://ft-nostress.chili-publish.online/",
             resourceName: "Documents",
-            parentFolder: "path",
+            parentFolder: path,
             numLevels: 1,
             includeSubDirectories: true,
             includeFiles: true
@@ -216,7 +216,7 @@ export async function getDocumentsFromBackOffice(path) {
             apiKey: "apiKey",
             baseURL: baseURL, // Replaced with variable
             resourceName: "Documents",
-            parentFolder: "path",
+            parentFolder: path,
             numLevels: 1,
             includeSubDirectories: true,
             includeFiles: true
@@ -275,7 +275,7 @@ export async function getDocumentsFromBackOffice(path) {
             apiKey: "apiKey",
             baseURL: baseURL,
             resourceName: "Documents",
-            parentFolder: "path",
+            parentFolder: path,
             numLevels: 1,
             includeSubDirectories: true,
             includeFiles: true
@@ -332,7 +332,7 @@ export async function getDocumentsFromBackOffice(path) {
             apiKey: apiKey,
             baseURL: baseURL,
             resourceName: "Documents",
-            parentFolder: "path",
+            parentFolder: path,
             numLevels: 1,
             includeSubDirectories: true,
             includeFiles: true
@@ -395,7 +395,7 @@ export async function getDocumentsFromBackOffice(path) {
             apiKey: apiKey,
             baseURL: baseURL,
             resourceName: "Documents",
-            parentFolder: "path",
+            parentFolder: path,
             numLevels: 1,
             includeSubDirectories: true,
             includeFiles: true
@@ -413,8 +413,8 @@ export async function getDocumentsFromBackOffice(path) {
             const name = item.getAttribute("name");
             const isFolder = item.getAttribute("isFolder") === "true";
 
-            // Skip items with isFolder="false"
-            if (!isFolder) {
+            // Skip items with isFolder="false" or id is missing (for meta information)
+            if (isFolder || id == "") {
                 return null;
             }
 
@@ -434,6 +434,8 @@ export async function getDocumentsFromBackOffice(path) {
 ### 🧪 Test our getDocumentsFromBackOffice function
 
 TODO
+
+- get no documents back - passed in the wrong path or path does not exist or path has no documents in it.
 
 <br/>
 

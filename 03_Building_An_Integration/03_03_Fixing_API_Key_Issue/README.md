@@ -61,24 +61,25 @@ export async function getDocumentsFromBackOffice(path) {
 
         if (Math.abs(cache.envuserkey.created - Date.now()) > fourHourInMilliseconds) {
             apiKey = await generateAPIKey({ 
-                baseURL, 
-                envUserCredentials.name, 
-                envUserCredentials.password, 
-                envUserCredentials.environment
+                baseURL: baseURL, 
+                userName: envUserCredentials.name, 
+                password: envUserCredentials.password, 
+                environment: envUserCredentials.environment
             });
         }
 
-        const tree = await resourceGetTreeLevel({
-            apiKey,
-            baseURL,
-            "Documents",
-            path,
-            1,
-            true,
-            true})
+        const resp = await resourceGetTreeLevel({
+            apiKey: apiKey,
+            baseURL: baseURL,
+            resourceName: "Documents",
+            parentFolder: path,
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
+        });
 
-        const xmlDoc = (new DOMParser()).parseFromString(tree, "text/xml");
-        
+        const xmlDoc = (new DOMParser()).parseFromString(resp, "text/xml");
+
         const itemElements = xmlDoc.getElementsByTagName("item");
 
         const items = Array.from(itemElements).map((item) => {
@@ -86,7 +87,7 @@ export async function getDocumentsFromBackOffice(path) {
             const name = item.getAttribute("name");
             const isFolder = item.getAttribute("isFolder") === "true";
 
-            if (!isFolder) {
+            if (isFolder || id == "") {
                 return null;
             }
 
@@ -115,11 +116,11 @@ export async function getAPIKeyForUser(username) {
         let apiKey = cache.enduserkey.value;
 
         if (Math.abs(cache.enduserkey.created - Date.now()) > fourHourInMilliseconds) {
-            apiKey =  await generateAPIKey({ 
-                baseURL,
-                endUserCredentials.name,
-                endUserCredentials.password,
-                endUserCredentials.environment
+            apiKey = await generateAPIKey({ 
+                baseURL: baseURL,
+                userName: endUserCredentials.name, // Using a variable instead
+                password: endUserCredentials.password, // Using a variable instead
+                environment: endUserCredentials.environment // Using a variable instead
             });
         }
 
@@ -152,10 +153,10 @@ function getAPIKey(credentials, documentEntry) {
 
     if (Math.abs(cache.envuserkey.created - Date.now()) > fourHourInMilliseconds) {
         apiKey = await generateAPIKey({ 
-            baseURL, 
-            envUserCredentials.name, 
-            envUserCredentials.password, 
-            envUserCredentials.environment
+            baseURL: baseURL, 
+            userName: envUserCredentials.name, 
+            password: envUserCredentials.password, 
+            environment: envUserCredentials.environment
         });
     }
 }
@@ -183,10 +184,10 @@ function getAPIKey(credentials, documentEntry) {
 
     if (Math.abs(cache[documentEntry].created - Date.now()) > fourHourInMilliseconds) {
         apiKey = await generateAPIKey({ 
-            baseURL, 
-            credentials.name, 
-            credentials.password, 
-            credentials.environment
+            baseURL: baseURL, 
+            userName: credentials.name, 
+            password: credentials.password, 
+            environment: credentials.environment
         });
     }
 }
@@ -202,16 +203,17 @@ export async function getDocumentsFromBackOffice(path) {
 
         const apiKey = getAPIKey(envUserCredentials, "envuserkey");
 
-        const tree = await resourceGetTreeLevel({
-            apiKey,
-            baseURL,
-            "Documents",
-            path,
-            1,
-            true,
-            true})
+        const resp = await resourceGetTreeLevel({
+            apiKey: apiKey,
+            baseURL: baseURL,
+            resourceName: "Documents",
+            parentFolder: path,
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
+        });
 
-        const xmlDoc = (new DOMParser()).parseFromString(tree, "text/xml");
+        const xmlDoc = (new DOMParser()).parseFromString(resp, "text/xml");
 
         const itemElements = xmlDoc.getElementsByTagName("item");
 
@@ -220,7 +222,7 @@ export async function getDocumentsFromBackOffice(path) {
             const name = item.getAttribute("name");
             const isFolder = item.getAttribute("isFolder") === "true";
 
-            if (!isFolder) {
+            if (isFolder || id == "") {
                 return null;
             }
 
