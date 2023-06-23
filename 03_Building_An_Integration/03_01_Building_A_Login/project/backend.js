@@ -13,7 +13,9 @@ export async function getAPIKeyForUser(username) {
 
         return {
             username: username,
-            apiKey: apiKey
+            apiKey: apiKey,
+            environment: "ft-nostress",
+            baseURL: "https://ft-nostress.chili-publish.online/"
         }
     }
     catch(e) {

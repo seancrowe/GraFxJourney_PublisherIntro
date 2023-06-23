@@ -26,7 +26,9 @@ export async function getAPIKeyForUser(username) {
 
         return {
             username: username,
-            apiKey: apiKey
+            apiKey: apiKey,
+            environment: endUserCredentials.environment,
+            baseURL: baseURL
         }
     }
     catch(e) {
