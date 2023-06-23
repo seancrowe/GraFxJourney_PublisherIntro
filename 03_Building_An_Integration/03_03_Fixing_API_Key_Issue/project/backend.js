@@ -1,3 +1,4 @@
+import {fakeDatabaseGetDocument, fakeDatabaseSetDocument} from "./utilities.js";
 import {DOMParser} from "@xmldom/xmldom";
 import {generateAPIKey, resourceGetTreeLevel} from "./chiliBackOfficeInterface.js";
 
@@ -17,12 +18,8 @@ const envUserCredentials = {
 export async function getAPIKeyForUser(username) {
 
     try {
-        const apiKey = await generateAPIKey({ 
-            baseURL: baseURL,
-            userName: endUserCredentials.name, // Using a variable instead
-            password: endUserCredentials.password, // Using a variable instead
-            environment: endUserCredentials.environment // Using a variable instead
-        });
+
+        const apiKey = await getAPIKey(endUserCredentials, "enduserkey");
 
         return {
             username: username,
@@ -38,12 +35,7 @@ export async function getDocumentsFromBackOffice(path) {
 
     try {
 
-        const apiKey = await generateAPIKey({ 
-            baseURL: baseURL, 
-            userName: envUserCredentials.name, 
-            password: envUserCredentials.password, 
-            environment: envUserCredentials.environment
-        });
+        const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
 
         const resp = await resourceGetTreeLevel({
             apiKey: apiKey,
@@ -55,25 +47,21 @@ export async function getDocumentsFromBackOffice(path) {
             includeFiles: true
         });
 
-        // Parse the XML string
         const xmlDoc = (new DOMParser()).parseFromString(resp, "text/xml");
-        
-        // Get all <item> elements
+
         const itemElements = xmlDoc.getElementsByTagName("item");
 
-        // Convert <item> elements to an array of objects
         const items = Array.from(itemElements).map((item) => {
             const id = item.getAttribute("id");
             const name = item.getAttribute("name");
             const isFolder = item.getAttribute("isFolder") === "true";
 
-            // Skip items with isFolder="false" or id is missing (for meta information)
             if (isFolder || id == "") {
                 return null;
             }
 
             return { id, name };
-        }).filter(Boolean); // Filter out null values
+        }).filter(Boolean);
 
         return items;
     }
@@ -81,4 +69,29 @@ export async function getDocumentsFromBackOffice(path) {
         console.log(e);
         throw e;
     }
+}
+
+async function getAPIKey(credentials, documentEntry) {
+    const cache = fakeDatabaseGetDocument("cache");
+
+    console.log(cache);
+
+    const fourHoursInMilliseconds = 4 * 60 * 60 * 1000;
+    
+    let apiKey = cache[documentEntry].value;
+
+    if (Math.abs(cache[documentEntry].created - Date.now()) > fourHoursInMilliseconds) {
+        apiKey = await generateAPIKey({ 
+            baseURL: baseURL, 
+            userName: credentials.name, 
+            password: credentials.password, 
+            environment: credentials.environment
+        });
+
+        cache[documentEntry].value = apiKey;
+        cache[documentEntry].created = Date.now();
+        fakeDatabaseSetDocument("cache", cache);
+    }
+
+    return apiKey;
 }

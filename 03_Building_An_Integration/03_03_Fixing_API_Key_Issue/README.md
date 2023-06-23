@@ -41,10 +41,10 @@ So in our `getDocumentsFromBackOffice` function we would update our API key gene
 
 Why 4 hours? Publisher API keys actually are valid for longer than 4 hours, for most environments it will be 8 hours. When you generate a key, there is an attribute in the XML will that will give you when the key is no longer valid (based on the server timezone). However, to makes things simple, we can just cache keys for 4 hours.
 
-Lets import `fakeDatabaseGetDocument` from `utilities.js`. This is just a function that opens up our JSON file and returns the property passed.
+Lets import `fakeDatabaseGetDocument` and `fakeDatabaseSetDocument` from `utilities.js`. This is just a function that opens up our JSON file and returns the property passed.
 
 ```js
-import {fakeDatabaseGetDocument} from "./utilities.js";
+import {fakeDatabaseGetDocument, fakeDatabaseSetDocument} from "./utilities.js";
 ```
 
 Then we can use the method in our function:
@@ -59,14 +59,20 @@ export async function getDocumentsFromBackOffice(path) {
         
         let apiKey = cache.envuserkey.value;
 
-        if (Math.abs(cache.envuserkey.created - Date.now()) > fourHourInMilliseconds) {
+        if (Math.abs(cache.envuserkey.created - Date.now()) > fourHoursInMilliseconds) {
             apiKey = await generateAPIKey({ 
                 baseURL: baseURL, 
                 userName: envUserCredentials.name, 
                 password: envUserCredentials.password, 
                 environment: envUserCredentials.environment
             });
+
+            cache.envuserkey.value = apiKey;
+            cache.envuserkey.created = Date.now();
+            fakeDatabaseSetDocument("cache", cache);
         }
+
+        
 
         const resp = await resourceGetTreeLevel({
             apiKey: apiKey,
@@ -97,7 +103,8 @@ export async function getDocumentsFromBackOffice(path) {
         return items;
     }
     catch(e){
-
+        console.log(e);
+        throw e;
     }
 }
 ```
@@ -115,13 +122,17 @@ export async function getAPIKeyForUser(username) {
         
         let apiKey = cache.enduserkey.value;
 
-        if (Math.abs(cache.enduserkey.created - Date.now()) > fourHourInMilliseconds) {
+        if (Math.abs(cache.enduserkey.created - Date.now()) > fourHoursInMilliseconds) {
             apiKey = await generateAPIKey({ 
                 baseURL: baseURL,
                 userName: endUserCredentials.name, // Using a variable instead
                 password: endUserCredentials.password, // Using a variable instead
                 environment: endUserCredentials.environment // Using a variable instead
             });
+
+            cache.enduserkey.value = apiKey;
+            cache.enduserkey.created = Date.now();
+            fakeDatabaseSetDocument("cache", cache);
         }
 
         return {
@@ -151,7 +162,7 @@ function getAPIKey(credentials, documentEntry) {
     
     let apiKey = cache.envuserkey.value;
 
-    if (Math.abs(cache.envuserkey.created - Date.now()) > fourHourInMilliseconds) {
+    if (Math.abs(cache.envuserkey.created - Date.now()) > fourHoursInMilliseconds) {
         apiKey = await generateAPIKey({ 
             baseURL: baseURL, 
             userName: envUserCredentials.name, 
@@ -159,6 +170,8 @@ function getAPIKey(credentials, documentEntry) {
             environment: envUserCredentials.environment
         });
     }
+
+    return apiKey;
 }
 ```
 
@@ -175,21 +188,27 @@ So, our new function signature looks like:
 Let's update the body of the function by changing `envUserCredentials` to `credentials` and `cache.envuserkey` to `cache[documentEntry]`:
 
 ```js
-function getAPIKey(credentials, documentEntry) {
+async function getAPIKey(credentials, documentEntry) {
     const cache = fakeDatabaseGetDocument("cache");
 
     const fourHoursInMilliseconds = 4 * 60 * 60 * 1000;
     
     let apiKey = cache[documentEntry].value;
 
-    if (Math.abs(cache[documentEntry].created - Date.now()) > fourHourInMilliseconds) {
+    if (Math.abs(cache[documentEntry].created - Date.now()) > fourHoursInMilliseconds) {
         apiKey = await generateAPIKey({ 
             baseURL: baseURL, 
             userName: credentials.name, 
             password: credentials.password, 
             environment: credentials.environment
         });
+
+        cache[documentEntry].value = apiKey;
+        cache[documentEntry].created = Date.now();
+        fakeDatabaseSetDocument("cache", cache);
     }
+
+    return apiKey
 }
 ```
 
@@ -232,7 +251,8 @@ export async function getDocumentsFromBackOffice(path) {
         return items;
     }
     catch(e){
-
+        console.log(e);
+        throw e;
     }
 }
 ```

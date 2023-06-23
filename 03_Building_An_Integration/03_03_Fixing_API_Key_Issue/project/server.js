@@ -50,8 +50,6 @@ const server = http.createServer((req, res) => {
   else {
     const url = (req.url == "/" || req.url == "/authentication") ? "/store" : req.url;
 
-    console.log(url);
-
     if (url == "/api/getdocumentsfrombackoffice") {
       getDocumentsFromBackOffice("StoreDocuments")
       .then(content => {
