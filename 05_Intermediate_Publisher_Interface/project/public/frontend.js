@@ -4,7 +4,7 @@ var publisher;
 var APIKEY;
 var editorURL;
 async function main(PublisherInterface) {
-    document.addEventListener("DOMContentLoaded", async () => {
+    window.document.addEventListener("DOMContentLoaded", async () => {
         const userName = document.getElementById("user");
         const password = document.getElementById("pass");
         const loginButton = document.getElementById("login");
