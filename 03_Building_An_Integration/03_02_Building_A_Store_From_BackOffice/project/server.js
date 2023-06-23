@@ -1,7 +1,7 @@
 import http from "http";
 import  fs from "fs";
 import path from "path";
-import {getAPIKeyForUser, getDocumentsFromBackOffice} from "./backend.js";
+import {copyDocumentForUser, getAPIKeyForUser, getDocumentsFromBackOffice, getDocumentPreview} from "./backend.js";
 import { fileURLToPath } from "url";
 
 const port = 3000; // Set the desired port number
@@ -48,25 +48,60 @@ const server = http.createServer((req, res) => {
     }
   }
   else {
+
+    const {username} = JSON.parse(req.headers.cookie)
+
     const url = (req.url == "/" || req.url == "/authentication") ? "/store" : req.url;
 
-    console.log(url);
+    if (url.includes("/api/")) {
+      if (url == "/api/getdocumentsfrombackoffice") {
+        getDocumentsFromBackOffice("StoreDocuments")
+        .then(content => {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(content));
+        })
+        .catch(e => {
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.end(e.toString());
+            console.error(e);
+        })
+      }
 
-    if (url == "/api/getdocumentsfrombackoffice") {
-      getDocumentsFromBackOffice("StoreDocuments")
-      .then(content => {
-        console.log(content);
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify(content));
-      })
-      .catch(e => {
-          res.writeHead(500, { "Content-Type": "text/plain" });
-          res.end(e.toString());
-          console.error(e);
-      })
+      if (url == "/api/copydocument") {
+
+        let body = "";
+
+        req.on("data", (chunk) => body += chunk)
+
+        req.on("end", () => {
+          const {id, name} = JSON.parse(body);
+          copyDocumentForUser(username, id, name).then(content => {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(content));
+          })
+          .catch(e => {
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.end(e.toString());
+            console.error(e);
+        })
+        })
+        
+
+      }
+
+      if (url.includes("/api/getdocumentpreview/")) {
+        const urlArray = url.split("/");
+        const id = urlArray[urlArray.length - 1];
+
+        getDocumentPreview(id).then(content => {
+          res.writeHead(200, { "Content-Type": "image/png" });
+          content.pipe(res);
+        })
+      }
     }
     else {
-      const fileName = (url.includes(".js")) ? url : `${url}.html`;
+      
+      const fileName = (url.includes(".js")) ? url : `${url.split("?")[0]}.html`;
 
       try {
         const content = fs.readFileSync(`${publicPath}${fileName}`);
