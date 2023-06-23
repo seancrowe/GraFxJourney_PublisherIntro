@@ -3,6 +3,9 @@ We have a beautiful store that shows documents from the BackOffice to the end us
 
 Each store card has a button named "Edit", which when clicked does nothing. What we want to happen is when clicked for the editor to open.
 
+## Setup section
+To setup this section, copy the `editor.html` file from the `03_Integration_Workflow/project/public` path on the git repo to your project's public folder.
+
 However, we do not want the editor to open the document from the store. That would be bad, because it means our end users could modify store documents. What we really want to do is create a copy of the document and let end users edit their copy.
 
 ## What happens when "Edit" is pressed
@@ -64,9 +67,11 @@ import {downloadAssets, generateAPIKey, resourceGetTreeLevel, resourceItemCopy} 
 
 Then write the function with dummy data:
 ```js
-async function copyDocumentForUser(username, itemID: documentID, documentName) {
+export async function copyDocumentForUser(username, itemID: documentID, documentName) {
   try{
     await resourceItemCopy({
+      apiKey: "",
+      baseURL:"",
       resourceName: "",
       itemID: "",
       newName: "",
@@ -89,9 +94,14 @@ Let's talk about replacing each dummy data property:
 
 Now, let's replace those properties:
 ```js
-async function copyDocumentForUser(username, itemID: documentID, documentName) {
+export async function copyDocumentForUser(username, itemID: documentID, documentName) {
   try{
+
+    const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
+
     await resourceItemCopy({
+      apiKey: apiKey,
+      baseURL:baseURL,
       resourceName: "Documents",
       itemID: documentID,
       newName: documentName,
@@ -122,20 +132,21 @@ The response will look something like:
 Again, this is not a course in JavaScript, so I am going to add the code to get the ID to the function. Feel free to try and write your own before moving forward.
 
 ```js
-async function copyDocumentForUser(username, itemID: documentID, documentName) {
+export async function copyDocumentForUser(username, documentID, documentName) {
   try{
-    const resp = await resourceItemCopy({
+    const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
+
+    const itemXML = await resourceItemCopy({
+      apiKey: apiKey,
+      baseURL:baseURL,
       resourceName: "Documents",
       itemID: documentID,
       newName: documentName,
       folderPath: "UserDocuments/" + username + "/temp"
     });
 
-    // Get resp body as a string
-    const itemXML = await resp.text();
-
     // Create a DOMParser object and parse the XML string
-    const itemDoc = (new DOMParser()).parser.parseFromString(itemXML, "text/xml");
+    const itemDoc = (new DOMParser()).parseFromString(itemXML, "text/xml");
 
     // Get the id attribute value
     const id = itemDoc.documentElement.getAttribute("id");
@@ -170,9 +181,10 @@ it would be `/UserDocuments/{username}/temp/{year}/{month}/{day}`
 That would be pretty easy to write in code. Here would be our update function if we wanted to go with that solution.
 
 ```js
-async function copyDocumentForUser(username, itemID: documentID, documentName) {
+export async function copyDocumentForUser(username, documentID, documentName) {
   try{
-    
+    const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
+
     // Get the current date
     const currentDate = new Date();
 
@@ -184,16 +196,16 @@ async function copyDocumentForUser(username, itemID: documentID, documentName) {
     // Create the "year/month/day" string
     const dateString = year + "/" + month + "/" + day;
     
-    const resp = await resourceItemCopy({
-      resourceName: "Documents",
-      itemID: documentID,
-      newName: documentName,
-      folderPath: "UserDocuments/" + username + "/temp/" + dateString // Add dataString
+    const itemXML = await resourceItemCopy({
+        apiKey: apiKey,
+        baseURL:baseURL,
+        resourceName: "Documents",
+        itemID: documentID,
+        newName: documentName,
+        folderPath: "UserDocuments/" + username + "/temp/" + dateString
     });
 
-    const itemXML = await resp.text();
-
-    const itemDoc = (new DOMParser()).parser.parseFromString(itemXML, "text/xml");
+    const itemDoc = (new DOMParser()).parseFromString(itemXML, "text/xml");
 
     const id = itemDoc.documentElement.getAttribute("id");
 
@@ -215,9 +227,10 @@ That way our clean up script can clean that folder every day, week, month, etc.
 We still need to break the temp folder down into /{year}/{month}/{day} and if we have a lot of users we might even need to break it down into hours /{year}/{month}/{day}/{hour}. The reason we add hour is because we getting a higher volume of documents because temp is now for all of our users.
 
 ```js
-async function copyDocumentForUser(username, itemID: documentID, documentName) {
+export async function copyDocumentForUser(username, documentID, documentName) {
   try{
-    
+    const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
+
     // Get the current date
     const currentDate = new Date();
 
@@ -229,16 +242,16 @@ async function copyDocumentForUser(username, itemID: documentID, documentName) {
 
     const dateString = year + "/" + month + "/" + day "/" + hour; // Add hour
     
-    const resp = await resourceItemCopy({
-      resourceName: "Documents",
-      itemID: documentID,
-      newName: documentName,
-      folderPath: "UserDocuments/" + username + "/temp/" + dateString
+    const itemXML = await resourceItemCopy({
+        apiKey: apiKey,
+        baseURL:baseURL,
+        resourceName: "Documents",
+        itemID: documentID,
+        newName: documentName,
+        folderPath: "UserDocuments/" + username + "/temp/" + dateString
     });
 
-    const itemXML = await resp.text();
-
-    const itemDoc = (new DOMParser()).parser.parseFromString(itemXML, "text/xml");
+    const itemDoc = (new DOMParser()).parseFromString(itemXML, "text/xml");
 
     const id = itemDoc.documentElement.getAttribute("id");
 
@@ -258,9 +271,10 @@ For this learning project we are going to continue with the first solution.
 
 If you are following along, please update your `copyDocumentForUser` with the first solution.
 ```js
-async function copyDocumentForUser(username, itemID: documentID, documentName) {
+export async function copyDocumentForUser(username, documentID, documentName) {
   try{
-    
+    const apiKey = await getAPIKey(envUserCredentials, "envuserkey");
+
     // Get the current date
     const currentDate = new Date();
 
@@ -272,23 +286,23 @@ async function copyDocumentForUser(username, itemID: documentID, documentName) {
     // Create the "year/month/day" string
     const dateString = year + "/" + month + "/" + day;
     
-    const resp = await resourceItemCopy({
-      resourceName: "Documents",
-      itemID: documentID,
-      newName: documentName,
-      folderPath: "UserDocuments/" + username + "/temp/" + dateString // Add dataString
+    const itemXML = await resourceItemCopy({
+        apiKey: apiKey,
+        baseURL:baseURL,
+        resourceName: "Documents",
+        itemID: documentID,
+        newName: documentName,
+        folderPath: "UserDocuments/" + username + "/temp/" + dateString
     });
 
-    const itemXML = await resp.text();
-
-    const itemDoc = (new DOMParser()).parser.parseFromString(itemXML, "text/xml");
+    const itemDoc = (new DOMParser()).parseFromString(itemXML, "text/xml");
 
     const id = itemDoc.documentElement.getAttribute("id");
 
     return {id:id};
   }
   catch(e){
-
+    throw e;
   }
 }
 ```
@@ -301,4 +315,3 @@ Go back and test
 ----
 
 This is the end of the section...
-
