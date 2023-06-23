@@ -61,59 +61,6 @@ Once you have those folders, either move or create three new documents. Make sur
 
 <br/>
 
-## Making our frontend show documents
-Create a file in root of our project folder of your project named `frontend.js`. All the JavaScript we will use will be pulled from `frontend.js` by our HTML pages.
-
-The store.html page is expecting a function called `renderStoreDocumentsFromBackOffice` which has a function signature like so:
-```ts
-() => {id:string, name:string, previewURL:string}[]
-```
-
-This function takes the `apiKey` string and returns an array of objects that contain the document id and preview URL of the document.
-
-We can create the first version of our function in the `frontend.js` filled with some dummy data:
-```js
-export async renderStoreDocumentsFromBackOffice() {
-    return [{
-        id:"",
-        name:"test",
-        previewURL:"https://fastly.picsum.photos/id/925/200/300.jpg"
-    }]
-}
-```
-
-<br/>
-
-### 🧪 Test dummy document in store
-Run the following command in the root directory of your project.
-
-```bash
-node ./server.js
-```
-
-In your terminal you will see the message.
-
-```
-Server running on port 3000
-```
-
-If you go to `http://localhost:3000` you will get a login page. Login in with whatever user you wish and the store page should load with single document card and a random image from picsum.
-
-<br/>
-
-⚠️ Something wrong?
-
-- If you get a message similar to `This site can’t be reached` or `This site can’t provide a secure connection` see [Test project setup](#Test-project-setup).
-- If you only see a blank store with no document cards, then there are four most likely scenarios:
-    - You did not properly place your `frontend.js` file in your `public` folder
-    - You misnamed the `frontend.js` file.
-    - You misnamed the `renderStoreDocumentsFromBackOffice` function in the `frontend.js` file.
-    - You forgot to export `renderStoreDocumentsFromBackOffice` in the `frontend.js` file.
-
-If you get stuck, create an issue on github and include a link to your repo for your project up to this point.
-
-<br/>
-
 ## Making our store show documents from the StoreDocuments folder
 Great that we have a dummy document, but we need to show documents from the BackOffice in the StoreDocuments folder.
 
@@ -173,13 +120,13 @@ export async function getDocumentsFromBackOffice(path) {
 
     try {
         const tree = await resourceGetTreeLevel({
-            "apiKey",
-            "baseURL",
-            "resourceName",
-            "parentFolder",
-            "numLevels",
-            "includeSubDirectories",
-            "includeFiles"
+            apiKey: "",
+            baseURL: "",
+            resourceName: "",
+            parentFolder: "",
+            numLevels: "",
+            includeSubDirectories: "",
+            includeFiles: ""
         })
 
         return [{
@@ -199,13 +146,13 @@ export async function getDocumentsFromBackOffice(path) {
 
     try {
         const tree = await resourceGetTreeLevel({
-            "apiKey",
-            "https://ft-nostress.chili-publish.com/",
-            "Documents",
-            path,
-            1,
-            true,
-            true
+            apiKey: "apiKey",
+            baseURL: "https://ft-nostress.chili-publish.online/",
+            resourceName: "Documents",
+            parentFolder: "path",
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
         })
 
         return [{
@@ -240,16 +187,16 @@ Let's first fix our baseURL issue, in both `getAPIKeyForUser` and `getDocumentsF
 import {generateAPIKey, resourceGetTreeLevel} from `./chiliBackOfficeInterface.js`
 
 // Added new variable
-const baseURL = "https://ft-nostress.chili-publish.com/";
+const baseURL = "https://ft-nostress.chili-publish.online/";
 
 export async function getAPIKeyForUser(username) {
 
     try {
         const apiKey = await generateAPIKey({ 
-            baseURL, // Replaced with variable
-            "endUser", 
-            "chili#Password@1234", 
-            "ft-nostress" 
+            baseURL:baseURL, // Replaced with variable
+            userName:"endUser", 
+            password:"chili#Password@1234", 
+            environment:"ft-nostress" 
         });
 
         return {
@@ -266,14 +213,14 @@ export async function getDocumentsFromBackOffice(path) {
 
     try {
         const tree = await resourceGetTreeLevel({
-            "apiKey",
-            baseURL, // Replaced with variable
-            "Documents",
-            path,
-            1,
-            true,
-            true
-        })
+            apiKey: "apiKey",
+            baseURL: baseURL, // Replaced with variable
+            resourceName: "Documents",
+            parentFolder: "path",
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
+        });
 
         return [{
             name:"",
@@ -291,9 +238,9 @@ While we are here, let's fix `generateAPIKey` because there are some values in t
 We will pull out the credentials for generating the end user API key and put them in an object.
 
 ```js
-import {generateAPIKey, resourceGetTreeLevel} from `./chiliBackOfficeInterface.js`
+import {generateAPIKey, resourceGetTreeLevel} from "./chiliBackOfficeInterface.js"
 
-const baseURL = "https://ft-nostress.chili-publish.com/";
+const baseURL = "https://ft-nostress.chili-publish.online/";
 // New object to hold our credentials
 const endUserCredentials = {
     name: "endUser",
@@ -305,10 +252,10 @@ export async function getAPIKeyForUser(username) {
 
     try {
         const apiKey = await generateAPIKey({ 
-            baseURL,
-            endUserCredentials.name, // Using a variable instead
-            endUserCredentials.password, // Using a variable instead
-            endUserCredentials.environment // Using a variable instead
+            baseURL: baseURL,
+            userName: endUserCredentials.name, // Using a variable instead
+            password: endUserCredentials.password, // Using a variable instead
+            environment: endUserCredentials.environment // Using a variable instead
         });
 
         return {
@@ -325,14 +272,14 @@ export async function getDocumentsFromBackOffice(path) {
 
     try {
         const tree = await resourceGetTreeLevel({
-            "apiKey",
-            baseURL,
-            "Documents",
-            path,
-            1,
-            true,
-            true
-        })
+            apiKey: "apiKey",
+            baseURL: baseURL,
+            resourceName: "Documents",
+            parentFolder: "path",
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
+        });
 
         return [{
             name:"",
@@ -355,7 +302,7 @@ Like the `endUser` lets set the credentials in the top of the `backend.js` file.
 ```js
 import {generateAPIKey, resourceGetTreeLevel} from `./chiliBackOfficeInterface.js`
 
-const baseURL = "https://ft-nostress.chili-publish.com/";
+const baseURL = "https://ft-nostress.chili-publish.online/";
 const endUserCredentials = {
     name: "endUser",
     password: "chili#Password@1234",
@@ -375,21 +322,21 @@ export async function getDocumentsFromBackOffice(path) {
     try {
 
         const apiKey = await generateAPIKey({ 
-            baseURL, 
-            envUserCredentials.name, 
-            envUserCredentials.password, 
-            envUserCredentials.environment
+            baseURL: baseURL, 
+            userName: envUserCredentials.name, 
+            password: envUserCredentials.password, 
+            environment: envUserCredentials.environment
         });
 
         const tree = await resourceGetTreeLevel({
-            apiKey,
-            baseURL,
-            "Documents",
-            path,
-            1,
-            true,
-            true
-        })
+            apiKey: apiKey,
+            baseURL: baseURL,
+            resourceName: "Documents",
+            parentFolder: "path",
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
+        });
 
         return [{
             name:"",
@@ -426,26 +373,33 @@ This is where looking at the response of the ResourceGetTreeLevel endpoint is im
 ### Transforming the data
 Because we are not using any sub-folders the transformation from our XML string to objects with just a name and an id is rather simple. Also, because this is not a course in JavaScript, I am going to just give you the solution below, but feel free to try and come up with a solution on your own first.
 
+Because nodejs does not come with a DOM parser, we need to add the DOMParser we downloaded in [Chapter 02](). At the top of `backend.js` add this import:
+```js
+import {DOMParser} from "@xmldom/xmldom";
+```
+
+With the DOM parser, we are now able to transform the data.
 ```js
 export async function getDocumentsFromBackOffice(path) {
 
     try {
 
         const apiKey = await generateAPIKey({ 
-            baseURL, 
-            envUserCredentials.name, 
-            envUserCredentials.password, 
-            envUserCredentials.environment
+            baseURL: baseURL, 
+            userName: envUserCredentials.name, 
+            password: envUserCredentials.password, 
+            environment: envUserCredentials.environment
         });
 
         const tree = await resourceGetTreeLevel({
-            apiKey,
-            baseURL,
-            "Documents",
-            path,
-            1,
-            true,
-            true})
+            apiKey: apiKey,
+            baseURL: baseURL,
+            resourceName: "Documents",
+            parentFolder: "path",
+            numLevels: 1,
+            includeSubDirectories: true,
+            includeFiles: true
+        });
 
         // Parse the XML string
         const xmlDoc = (new DOMParser()).parseFromString(tree, "text/xml");

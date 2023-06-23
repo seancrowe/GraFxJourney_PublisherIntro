@@ -18,11 +18,18 @@ const server = http.createServer((req, res) => {
 
       req.on("data", (chunk) => body += chunk)
 
-      req.on("end", () => {
-        const {username} = JSON.stringify(body);
-        const apiKey = getAPIKeyForUser(username);
-        res.writeHead(200, { "Content-Type": "text/plain", "Set-Cookie": `key=${apiKey}; username=exampleUser; Max-Age=180` });
-        res.end("Cookie Sent - You are Authorized");
+      req.on("end", async () => {
+        try {
+          const {username} = JSON.parse(body);
+          const cookie = JSON.stringify(await getAPIKeyForUser(username));
+          res.writeHead(200, { "Content-Type": "text/plain", "Set-Cookie": `key=${cookie}; Max-Age=180` });
+          res.end("Cookie Sent - You are Authorized");
+        }
+        catch(e){
+          res.writeHead(500, { "Content-Type": "text/plain" });
+          res.end(e.toString());
+          console.error(e);
+        }
       });
     }
     else {
@@ -53,7 +60,7 @@ const server = http.createServer((req, res) => {
     }
     catch(err) {
         res.writeHead(404, { "Content-Type": "text/plain" });
-        res.end(`No ${req.url} found.`);
+        res.end(`No ${fileName} found.`);
         console.error(err);
         return;
     }

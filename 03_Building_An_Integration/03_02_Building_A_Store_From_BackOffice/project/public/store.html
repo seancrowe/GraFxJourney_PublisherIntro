@@ -96,32 +96,39 @@
         <!-- Add as many cards as you want here -->
     </div>
     <script>
-      function switchData() {
-          const topBar = document.getElementById('top-bar');
-          const loadDataButton = document.getElementById('load-data-button');
+        const cookie = JSON.parse(document.cookie);
+        let {username, apiKey, loadFromBO=true} = cookie;
 
-          if (topBar.style.backgroundColor == "blue") {
-            topBar.style.backgroundColor = 'teal';
-            loadDataButton.innerHTML = 'Load Data From BackOffice';
-          }
-          else {
-            topBar.style.backgroundColor = 'blue';
-            loadDataButton.innerHTML = 'Load Data From Database';
-          }
-      }
-    </script>
-    <script type="module">
-     
-     (async () => {
-      try {
-      const {hi} = await import("./frontend.js");
-      }
-      catch(e) {
-        console.log(e);
-      }
-      console.log("hi")
-      //console.log(hi());
-    })()
+        function switchData(setLoadFromBO) {
+
+            loadFromBO = (setLoadFromBO != null) ? setLoadFromBO : !loadFromBO;
+
+            console.log(loadFromBO)
+            const topBar = document.getElementById('top-bar');
+            const loadDataButton = document.getElementById('load-data-button');
+
+            if (!loadFromBO) {
+                topBar.style.backgroundColor = 'teal';
+                loadDataButton.innerHTML = 'Load Data From BackOffice';
+            }
+            else {
+                topBar.style.backgroundColor = 'blue';
+                loadDataButton.innerHTML = 'Load Data From Database';
+            }
+
+            renderDocuments(loadFromBO);
+            document.cookie = JSON.stringify({...cookie, loadFromBO});
+        }
+
+        function renderDocuments(loadFromBO) {
+            if (loadFromBO) {
+                fetch("/api/getdocumentsfrombackoffice")
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            switchData(loadFromBO);
+        });
     </script>
 </body>
 </html>

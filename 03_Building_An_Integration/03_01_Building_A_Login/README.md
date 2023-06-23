@@ -37,7 +37,12 @@ export async function getAPIKeyForUser(username) {
 
     // If something goes wrong, we will get an error, which we can just throw up the chain.
     try {
-        const apiKey = await generateAPIKey({ "baseURL", "userName", "password", "environment" });
+        const apiKey = await generateAPIKey({ 
+            baseURL: "",
+            userName: "",
+            password: "",
+            environment: ""
+        });
 
         return {
             username: username,
@@ -55,13 +60,18 @@ Great! But now we need to fill in some actual data to generate an API key.
 To make things simple, you can hardcode the values in the function.
 
 ```js
-import {generateAPIKey} from `./chiliBackOfficeInterface.js`
+import {generateAPIKey} from "./chiliBackOfficeInterface.js"
 
 export async function getAPIKeyForUser(username) {
 
     // If something goes wrong, we will get an error, which we can just throw up the chain.
     try {
-        const apiKey = await generateAPIKey({ "https://ft-nostress.chili-publish.com/", "endUser", "chili#Password@1234", "ft-nostress" });
+        const apiKey = await generateAPIKey({ 
+            baseURL: "https://ft-nostress.chili-publish.online/",
+            userName: "endUser",
+            password: "chili#Password@1234",
+            environment: "ft-nostress"
+        });
 
         return {
             username: username,
@@ -96,7 +106,12 @@ export async function getAPIKeyForUser(username) {
 
     // If something goes wrong, we will get an error, which we can just throw up the chain.
     try {
-        const apiKey = await generateAPIKey({ "https://ft-nostress.chili-publish.com/", "endUser", "chili#Password@1234", "ft-nostress" });
+        const apiKey = await generateAPIKey({ 
+            baseURL: "https://ft-nostress.chili-publish.online/",
+            userName: "endUser",
+            password: "chili#Password@1234",
+            environment: "ft-nostress"
+        });
 
         return {
             username: username,
@@ -141,6 +156,8 @@ Great! This is exactly what we wanted to happen. Don't forget to `ctrl` + `c` to
     - 📄server.js
     - 📄package-lock.json
     - 📄package.json
+- If when login in you get Error on login endpoint:500, open your network tab and try again to read the Response from /authentication.
+    - If you get an error that contains "ENOTFOUND" then you `baseURL` does not exist.
 - If you do not get the error message "No store found." but instead get an site with a blue navigation at the top, then you probably copied over too many files from `03_Integration_Workflow/project/public` to your project's `public` folder. Please see the above root folder diagram. Your `public` folder should only have one file in it: `login.html`.
     
 
