@@ -26,7 +26,7 @@
         </div>
         <div>
             <!-- This iframe will hold the CHILI Publisher editor -->
-            <iframe></iframe>
+            <iframe style="width:600px; height:600px"></iframe>
         </div>
     </div>
     <script type="module">
@@ -37,16 +37,20 @@
 
       console.log(chiliSession);
 
-      import("./frontend.js").then(({main}) => {
-        main();
+      document.addEventListener("DOMContentLoaded", () => {
+        import("./frontend.js").then(({main}) => {
+        main(chiliSession.apiKey, chiliSession.baseURL, chiliSession.environment, chiliSession.docID);
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e);
         document.getElementsByTagName("iframe")[0].src = `${chiliSession.baseURL}/${chiliSession.environment}/editor_html.aspx?doc=${chiliSession.docID}&apiKey=${chiliSession.apiKey}`;
         document.getElementById("editorScreen").style.display = "block";
       });
+    })
+
+      
 
     </script>
-    <script type="module" src="./frontend.js"> </script>
 </body>
 
 </html>
