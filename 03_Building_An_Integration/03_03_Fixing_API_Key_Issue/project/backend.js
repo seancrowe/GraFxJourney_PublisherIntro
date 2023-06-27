@@ -6,12 +6,12 @@ const baseURL = "https://ft-nostress.chili-publish.online/";
 // New object to hold our credentials
 const endUserCredentials = {
     name: "endUser",
-    password: "chili#Password@1234S",
+    password: "",
     environment: "ft-nostress"
 }
 const envUserCredentials = {
     name: "envUser",
-    password: "chili#Password@5678S",
+    password: "",
     environment: "ft-nostress"
 }
 
