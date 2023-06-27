@@ -160,10 +160,6 @@ export async function copyDocumentForUser(username, documentID, documentName) {
 }
 ```
 
-### 🧪 Test opening of editor
-
-TODO
-Go back and test
 
 ## ⚠️ Problem of clutter
 Everything works now, but we have a problem that will hit us long term. Right now we are putting this temp document in the path `/UserDocuments/{username}/temp` which works, but over time this folder will be come massive. Imagine 1000 users all using our application every day.
@@ -306,12 +302,3 @@ export async function copyDocumentForUser(username, documentID, documentName) {
   }
 }
 ```
-
-### 🧪 Test opening of editor
-
-TODO
-Go back and test
-
-----
-
-This is the end of the section...

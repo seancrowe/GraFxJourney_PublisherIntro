@@ -92,11 +92,6 @@ So lets first setup this special user.
 
 <br/>
 
-## Setting up the end user
-📝 need to explain the correct permissions and get BackOffice pictures
-
-<br/>
-
 ## Finishing our function - almost
 Now we can finish our function but simply returning the apiKey in our function return.
 
@@ -196,4 +191,4 @@ Frontend -> Reloads Page (sends new cookie)
 Server.js -> Pushes Frontend User to Store Page (store.html)
 ```
 ----
-In the next section, Chapter 03 - Section 02, we will....
+In the next section, Chapter 03 - Section 02, we will set up a store page so there's actually a reason to login.

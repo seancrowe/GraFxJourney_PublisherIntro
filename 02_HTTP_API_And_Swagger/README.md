@@ -111,17 +111,14 @@ Why use `tasks` at all? Imagine a scenario where you have an incredibly large, c
 
 ## TaskGetStatus
 `TaskGetStatus` is an endpoint that takes a `task` ID and returns the associated `task` XML. The response XML has a number of attributes that gives details about the `task`, but these are the most relevant ones to look at:  
-```
-REMOVE THIS IN FINAL 
-double check these attribute names and what the values can be ('True' v 'true')
-Throw in at least an image of a task XML
-```
 - `id` - The identifier for the task in question
-- `Finished` - Can be 'true' or 'false', indicates whether the task is still running or not
-- `Succeeded` - Can be 'true' or 'false', indicates whether the task finished successfully or failed
+- `Finished` - Can be 'True' or 'False', indicates whether the task is still running or not
+- `succeeded` - Can be 'True' or 'False', indicates whether the task finished successfully or failed
 - `result` - Will contain a URL and relative URL to download the output
+
+![Task Response](assets/task.png)
 
 
 The typical workflow when dealing with `tasks` is to regularly ping the `TaskGetStatus` endpoint with your `task` ID until you see that it finished, at which point you would either extract the result URL or handle any errors that appeared.
 
-There are some pitfalls to watch out with `tasks`. For one, it is possible that you will see a `task` with `succeeded` == `true`, but with an empty `result`. Another thing is that there are some inconsistencies with formatting within the endpoint; you might see `true` written as `True` (with a capital T) for some attributes, which is something to keep in mind when parsing the response XML.
+There are some pitfalls to watch out with `tasks`. For one, it is possible that you will see a `task` with `succeeded` == `True`, but with an empty `result`. Another thing is that there are some inconsistencies with formatting within the endpoint; you might see `true` written as `True` (with a capital T) for some attributes, which is something to keep in mind when parsing the response XML.

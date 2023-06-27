@@ -177,9 +177,6 @@ export async function getDocumentsFromBackOffice(path) {
 
 <br/>
 
-### 🧪 Test previews loading
-
-TODO
 
 ----
 

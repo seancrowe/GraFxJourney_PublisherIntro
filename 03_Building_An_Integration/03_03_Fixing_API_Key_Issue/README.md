@@ -276,9 +276,6 @@ export async function getAPIKeyForUser(username) {
 }
 ```
 
-### 🧪 Test store still working
-
-TODO
 
 <br/>
 

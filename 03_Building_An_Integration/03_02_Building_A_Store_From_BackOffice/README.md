@@ -36,13 +36,7 @@ There are benefits and downsides to each option, which we will review below.
 | Externally  | All your document XMLs are stored in your own systems which gives you complete control. | The integration is more complex as you will need to have the systems in place to store the XML as well as the ability for a designer to register a document created in CHILI in your system. | ✅ Yes |
 | Hybrid      | While you do not have complete control, you do have control over the meta data, because your frontend is using your database to display and manage documents. Only the physical XML is being stored in CHILI. | The integration is more complex as it requires a database or similar to track document IDs, but less complex that being completely external. You still need to have a the ability for a designer to to register a document created in CHILI in your system. | ✅ Yes |
 
-For this learning course, we are going to implement first the BackOffice as a location and then move over to the Hybrid model.
-
-### How dow we access them?
-TODO
-
-### How do we show that info to the frontend?
-TODO
+For this learning course, we are going to implement the BackOffice as a location, but please keep in mind that this is often times not the best solution for an integration.
 
 <br/>
 
@@ -431,13 +425,6 @@ export async function getDocumentsFromBackOffice(path) {
 
 <br/>
 
-### 🧪 Test our getDocumentsFromBackOffice function
-
-TODO
-
-- get no documents back - passed in the wrong path or path does not exist or path has no documents in it.
-
-<br/>
 
 ----
 

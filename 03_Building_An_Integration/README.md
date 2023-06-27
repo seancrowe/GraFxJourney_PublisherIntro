@@ -8,8 +8,6 @@ This chapter is broken up into 7 sections:
 - [03 Fixing API Key Issue]() - After section 02, we have a big issue of generating API keys all the time. We will fix that issue.
 - [04 Adding Previews]() - We will be adding previews to our store.
 - [05 Open A Document In A Publisher Editor]() - We will build a page that will allow us to open a document in an Editor.
-- [06 Building A My Documents Page]() - We will build a page that shows all the clients saved documents. 🏃‍♂️💨 - skip until after CREATE.
-- [07 Refactoring Our Store To Use Database]() - We will be refactoring our demo to use our fake database instead of the BackOffice.
 
 <br/>
 
@@ -26,12 +24,6 @@ However, we are going to be copying a lot of HTML files from the `03_Integration
 
 ### Hiding Logic
 Besides `server.js` much of the nodejs and browser logic is hidden in the prebuilt HTML files. This course is not a course on how to build websites, but how to use the CHILI APIs and discussing high level workflow.
-
-If you are interested in all this hidden information, please see:
-- (Server JS Setup)[] - which will go through the complete `server.js` file and discuss how it is handling the requests.
-- (HTML Page Designs)[] - which will go through each HTML page and discuss the setup and JavaScript logic.
-
-Keep in mind that both the above documents are advance and will go through things very quickly with the assumption you are already proficient in nodejs or working with HTML/JS/CSS.
 
 <br/>
 
