@@ -53,17 +53,6 @@ All other documents will not be known to our application.
 
 Once you have those folders, either move or create three new documents. Make sure the documents have some type of pictures, shapes, or text in them otherwise later on your previews will look blank.
 
-<br/>
-
-## Making our store show documents from the StoreDocuments folder
-Great that we have a dummy document, but we need to show documents from the BackOffice in the StoreDocuments folder.
-
-To accomplish this, the `store.html` page will function call an endpoint on our backend. The endpoint on our backend will then call the  `resourceGetTreeLevel` method from the `chiliBackOfficeInterface.js` file to and return to us a list of documents.
-
-In this case, `server.js` is expecting you to call the endpoint `/api/getdocumentsfrombackoffice`.
-
-This endpoint was created in `server.js` and all it does is pass the request onto a function in our `backend.js` called `getDocumentsFromBackOffice`.
-
 ### 🤔 Why are we doing this?
 
 Great question. If you are confused why are we calling a custom endpoint on our backend instead of just calling `ResourceGetTreeLevel` directly on the frontend or using `chiliBackOfficeInterface.js` on the frontend, then you will soon be enlighten.

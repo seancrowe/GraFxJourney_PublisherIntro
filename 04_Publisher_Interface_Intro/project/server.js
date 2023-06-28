@@ -55,7 +55,7 @@ const server = http.createServer((req, res) => {
 
     if (url.includes("/api/")) {
       if (url == "/api/getdocumentsfrombackoffice") {
-        getDocumentsFromBackOffice("StoreDocuments")
+        getDocumentsFromBackOffice("%CREATE_US_23/StoreDocuments")
         .then(content => {
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify(content));

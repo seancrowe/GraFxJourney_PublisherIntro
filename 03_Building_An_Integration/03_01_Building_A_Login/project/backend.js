@@ -7,7 +7,7 @@ export async function getAPIKeyForUser(username) {
         const apiKey = await generateAPIKey({ 
             baseURL: "https://ft-nostress.chili-publish.online/",
             userName: "endUser",
-            password: "CHILI#Password@1234S!!", //change me back before pushing changes :)
+            password: "", //change me back before pushing changes :)
             environment: "ft-nostress"
         });
 

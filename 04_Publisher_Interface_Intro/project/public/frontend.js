@@ -1,5 +1,6 @@
 // Import PublisherInterface library
 import { PublisherInterface } from 'https://unpkg.com/@chili-publish/publisher-interface@latest/dist/PublisherInterface.min.js';
+import {outputDocument} from '../backend.js'
 
 var publisher;
 export async function main(apiKey, baseURL, environment, documentID) {
@@ -9,6 +10,8 @@ export async function main(apiKey, baseURL, environment, documentID) {
 
     const varInput = document.getElementById("varInput");
     const varUpdateButton = document.getElementById("updateVariablesButton");
+    //const saveButton = document.getElementById("saveButton");
+    const outputPDFButton = documentID.getElementById("outputPDFButton");
 
     // Will have to replace with a better document
     const editorURL = `${baseURL}/${environment}/editor_html.aspx?doc=${documentID}&apiKey=${apiKey}&fullWS=false`;
@@ -27,8 +30,18 @@ export async function main(apiKey, baseURL, environment, documentID) {
         editorScreen.setAttribute("style", "display:flex");
 
         varUpdateButton.addEventListener("click", async() => {
-            await publisher.setProperty('document.variables[TestVar]', 'value', varInput.value);
+            console.log("Updating variables...");
+            await publisher.setProperty('document.variables[Title]', 'value', varInput.value);
         })
+
+        outputPDFButton.addEventListener("click", async() => {
+            console.log("outputting PDF...");
+            let docXML = await publisher.executeFunction('document', 'GetTempXML');
+
+            const pdfURL = await outputDocument(docXML);
+            document.open(pdfURL);
+        })
+
     });
     window.publisherInterface = publisher;
 

@@ -1,12 +1,6 @@
 import {fetch} from "cross-fetch";
 import {DOMParser} from "@xmldom/xmldom";
 
-// TODO:
-//  -Finish these out
-//  -Leave brief explanations of endpoints that weren't covered in the main lesson
-//  -Re: error handling -- Maybe just have it on generateAPIKey for now (this isn't a general web dev course, they should know
-//      how to generally do that sort of thing coming in; not our responsibility to teach)
-
 //GenerateAPIKey
 export async function generateAPIKey({baseURL, userName, password, environment}) {
     try {
@@ -80,7 +74,6 @@ export async function downloadAssets({ apiKey, baseURL, resourceType, id, type }
 
 }
 
-//add in a section for Get/SetVariableValues
 
 //DocumentCreatePDF
 export async function documentCreatePDF({apiKey, baseURL, itemID, settingsXML}) {

@@ -112,7 +112,7 @@ Why use `tasks` at all? Imagine a scenario where you have an incredibly large, c
 ## TaskGetStatus
 `TaskGetStatus` is an endpoint that takes a `task` ID and returns the associated `task` XML. The response XML has a number of attributes that gives details about the `task`, but these are the most relevant ones to look at:  
 - `id` - The identifier for the task in question
-- `Finished` - Can be 'True' or 'False', indicates whether the task is still running or not
+- `finished` - Can be 'True' or 'False', indicates whether the task is still running or not
 - `succeeded` - Can be 'True' or 'False', indicates whether the task finished successfully or failed
 - `result` - Will contain a URL and relative URL to download the output
 

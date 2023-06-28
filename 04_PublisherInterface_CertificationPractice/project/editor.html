@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Publisher Interface Intro</title>
+</head>
+
+<body>
+    <div id="editorScreen">
+        <div id="ui">
+            <input id="varInput" type="text" placeholder="Variable Text Input" />
+            <button id="updateVariablesButton">
+                Update Variables
+            </button>
+            <input id="zoomInput" type="text" placeholder="Zoom Value Input" />
+            <button id="zoomInput">
+                Update Zoom
+            </button>
+            <button id="outputPDFButton">
+                Generate PDF
+            </button>
+        </div>
+        <div>
+            <!-- This iframe will hold the CHILI Publisher editor -->
+            <iframe id="editor-iframe" src='placeURLhere' style="width:600px; height:600px"></iframe>
+        </div>
+    </div>
+    <script type="module">
+        //Your code goes here...
+    </script>
+</body>
+
+</html>

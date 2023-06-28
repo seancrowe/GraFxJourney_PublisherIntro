@@ -17,9 +17,9 @@
             <button id="updateVariablesButton">
                 Update Variables
             </button>
-            <button id="saveButton">
+            <!-- <button id="saveButton">
                 Save Document
-            </button>
+            </button> -->
             <button id="outputPDFButton">
                 Generate PDF
             </button>
@@ -43,7 +43,7 @@
         })
         .catch((e) => {
             console.log(e);
-            document.getElementsByTagName("iframe")[0].src = `${chiliSession.baseURL}/${chiliSession.environment}/editor_html.aspx?doc=${chiliSession.docID}&apiKey=${chiliSession.apiKey}`;
+            document.getElementsByTagName("iframe")[0].src = `${chiliSession.baseURL}/${chiliSession.environment}/editor_html.aspx?doc=${chiliSession.docID}&apiKey=${chiliSession.apiKey}&fullWS=false`;
             document.getElementById("editorScreen").style.display = "block";
         });
     })
